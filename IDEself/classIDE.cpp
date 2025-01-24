@@ -11,8 +11,8 @@ char *inpn;
 #define inpnam inpn
 //#define inpnam "input.class"
 #define tnam "a.txt"
-#define lockname "copy C:\\Users\\86139\\Desktop\\projects\\java\\test\\out\\production\\test\\mainclass.class input.class"
-//#define lockname "copy java.class input.class"
+//#define lockname "copy C:\\Users\\86139\\Desktop\\projects\\java\\test\\out\\production\\test\\mainclass.class input.class"
+#define lockname "copy java.class input.class"
 struct posln{
 	fpos_t a=0;
 	posln *n=0;
@@ -118,7 +118,7 @@ void inpc(FILE *F,FILE *O,FILE *C,int type){
 	else	fscanf(F,"%c",&c);
 	while(1){
 		system("cls");
-		fprintf(O,"ºòÑ¡=ÊäÈë\n");
+		fprintf(O,"å€™é€‰=è¾“å…¥\n");
 		for(int i=conti;i<conti+getheight()-2&&i<p;i++)
 			{if(getmousey()-1==i-conti)	fprintf(O,"->");	fprintf(O,"#%+04X\n",a[i]);}
 		int k=getmousey();
@@ -165,7 +165,7 @@ void delall(){
 //=============================================
 int main(int argc,char **argv){
 	inpn=argv[1];
-	system(lockname);
+	//system(lockname);
 	bool _tofile=false;
 	FILE *E;
 	while(1){
@@ -209,7 +209,7 @@ int main(int argc,char **argv){
 			char c;fscanf(F,"%c",&c);
 			switch (unsign(c)){
 				case 0X01:
-					fprintf(O,"ÎÄ±¾=\t×ÖÊı=");
+					fprintf(O,"æ–‡æœ¬=\tå­—æ•°=");
 					unsigned j;
 					j=show2(F,O);	fprintf(O,"\t");
 					for(;j>0;j--){fscanf(F,"%c",&c);
@@ -245,53 +245,53 @@ int main(int argc,char **argv){
 				case 0X03:
 					int ti;
 					read4(F,&ti);
-					fprintf(O,"ÕûÊı=   %+08X\t=%d",ti,ti);
+					fprintf(O,"æ•´æ•°=   %+08X\t=%d",ti,ti);
 					break;
 				case 0X04:
 					float tf;
 					read4(F,&tf);
-					fprintf(O,"Ğ¡Êı=   %f",tf);
+					fprintf(O,"å°æ•°=   %f",tf);
 					break;
 				case 0X05:
 					long long tl;
 					read8(F,&tl);
-					fprintf(O,"³¤Êı=   %+016llX=\t%lld",tl,tl);
+					fprintf(O,"é•¿æ•°=   %+016llX=\t%lld",tl,tl);
 					break;
 				case 0X06:
 					double td;
 					read8(F,&td);
-					fprintf(O,"³¤Ğ¡=   %lf",td);
+					fprintf(O,"é•¿å°=   %lf",td);
 					break;
 				case 0X07:
-					fprintf(O,"Àà=\t    #");
+					fprintf(O,"ç±»=\t    #");
 					outc(F,O,_class_name);
 					break;
 				case 0X08:
-					fprintf(O,"×Ö´®=\t    #");
+					fprintf(O,"å­—ä¸²=\t    #");
 					outc(F,O,_string_text);
 					break;
 				case 0X09:
-					fprintf(O,"×Ö¶Î\tÀà= #");
+					fprintf(O,"å­—æ®µ\tç±»= #");
 					outc(F,O,_class);
-					fprintf(O,"\tº¯Êı=    #");
+					fprintf(O,"\tå‡½æ•°=    #");
 					outc(F,O,_info);
 					break;
 				case 0X0A:
-					fprintf(O,"·½·¨\tÀà= #");
+					fprintf(O,"æ–¹æ³•\tç±»= #");
 					outc(F,O,_class);
-					fprintf(O,"\tº¯Êı=    #");
+					fprintf(O,"\tå‡½æ•°=    #");
 					outc(F,O,_info);
 					break;
 				case 0X0B:
-					fprintf(O,"½Ó¿Ú\tÀà= #");
+					fprintf(O,"æ¥å£\tç±»= #");
 					outc(F,O,_class);
-					fprintf(O,"\tº¯Êı=    #");
+					fprintf(O,"\tå‡½æ•°=    #");
 					outc(F,O,_info);
 					break;
 				case 0X0C:
-					fprintf(O,"º¯Êı\tÃû×Ö#");
+					fprintf(O,"å‡½æ•°\tåå­—#");
 					outc(F,O,_info_name);
-					fprintf(O,"\tÀàĞÍ=    #");
+					fprintf(O,"\tç±»å‹=    #");
 					outc(F,O,_info_type);
 					break; 
 				default:
@@ -319,10 +319,10 @@ int main(int argc,char **argv){
 		rewind(W);
 		O=(showno==_confw?stdout:W);
 		if(_tofile)	O=W;
-		fprintf(O,"³£Á¿¼ì²é=%d\n",cchk);
-		fprintf(O,"³£Á¿½¨Òé=%d\n",csug);
-		fprintf(O,"Êä³ö\n");
-		fprintf(O,"°ïÖú\n");
+		fprintf(O,"å¸¸é‡æ£€æŸ¥=%d\n",cchk);
+		fprintf(O,"å¸¸é‡å»ºè®®=%d\n",csug);
+		fprintf(O,"è¾“å‡º\n");
+		fprintf(O,"å¸®åŠ©\n");
 		//debug
 		
 		//interface
@@ -352,19 +352,19 @@ int main(int argc,char **argv){
 			if(_tofile)	O=E;
 			fgetpos(F,&(m[i].tpos[_methp]));
 			openflagsR(F,O);
-			fprintf(O,"\nÃû×Ö:\t#");	outc(F,O,_method_name);
-			fprintf(O,"\nÀàĞÍ:\t#");	outc(F,O,_method_type);
+			fprintf(O,"\nåå­—:\t#");	outc(F,O,_method_name);
+			fprintf(O,"\nç±»å‹:\t#");	outc(F,O,_method_type);
 			show2(F,W);
 			int typ=outc(F,W,_atri_type);
 			char s[256]={};readconst(copos[typ],s);
 			if(cmp(s,"Code")){
 	#define O_CODE_myIDE
 				fgetpos(F,&(m[i].tpos[_codep]));
-				fprintf(O,"\n´úÂë");	show4(F,O);
+				fprintf(O,"\nä»£ç ");	show4(F,O);
 				O=(showno==_codew&&methi==i)?stdout:W;
-				fprintf(O,"Õ»´óĞ¡=");	show2(F,O);
-				fprintf(O,"\t±äÁ¿Êı=");	show2(F,O);
-				fprintf(O,"\t³¤¶È=");
+				fprintf(O,"æ ˆå¤§å°=");	show2(F,O);
+				fprintf(O,"\tå˜é‡æ•°=");	show2(F,O);
+				fprintf(O,"\té•¿åº¦=");
 				unsigned len;		len=show4(F,O);
 				rewind(W);
 				fprintf(O,"\n");
@@ -409,7 +409,7 @@ int main(int argc,char **argv){
 				fclose(T);
 				O=(showno==_methw&&methi==i)?stdout:W;
 				if(_tofile)	O=E;
-				fprintf(O,"\n´íÎó´¦Àí");
+				fprintf(O,"\né”™è¯¯å¤„ç†");
 				O=(showno==_trysw&&methi==i)?stdout:W;
 				if(_tofile)	O=E;
 				fgetpos(F,&(m[i].tpos[_trysp]));
@@ -417,10 +417,10 @@ int main(int argc,char **argv){
 				for(int j=0;j<m[i].cocnt[_trysp];j++){
 					O=(showno==_trysw&&methi==i&&j>=m[i].trysi&&j<m[i].trysi+getheight())?stdout:W;
 					if(_tofile)	O=E;
-					fprintf(O,"\n´Ó  ={\t");	show2(F,O);
-					fprintf(O,"\tµ½  ={\t");	show2(F,O);
-					fprintf(O,"\t´¦Àí={\t");	show2(F,O);
-					fprintf(O,"\tÀà±ğ:\t");		show2(F,O);
+					fprintf(O,"\nä»  ={\t");	show2(F,O);
+					fprintf(O,"\tåˆ°  ={\t");	show2(F,O);
+					fprintf(O,"\tå¤„ç†={\t");	show2(F,O);
+					fprintf(O,"\tç±»åˆ«:\t");		show2(F,O);
 				}
 	#define O_ATRI_myIDE
 				unsigned short atril;
@@ -431,7 +431,7 @@ int main(int argc,char **argv){
 					typ=outc(F,W,_atri_type);
 					readconst(copos[typ],s);
 					if(cmp(s,"LineNumberTable")){
-						fprintf(O,"\nĞĞÊı±í");
+						fprintf(O,"\nè¡Œæ•°è¡¨");
 						O=(showno==_linsw&&methi==i)?stdout:W;
 						fgetpos(F,&(m[i].tpos[_linsp]));show4(F,W);
 						fprintf(O,"%+04X/",m[i].linsi);	m[i].cocnt[_linsp]=show2(F,O);
@@ -441,11 +441,11 @@ int main(int argc,char **argv){
 							fprintf(O,"\n");
 							if(k==m[methi].linss)	fprintf(O,"[");
 							if(k==getmousey()+m[methi].linsi-1)	fprintf(O,"-");
-							show2(F,O);	fprintf(O,"ĞĞ-\t");	show2(F,O);	fprintf(O,"ĞĞ");
+							show2(F,O);	fprintf(O,"è¡Œ-\t");	show2(F,O);	fprintf(O,"è¡Œ");
 						}
 					}else
 					if(cmp(s,"LocalVariableTable")){
-						fprintf(O,"\n±äÁ¿±í");
+						fprintf(O,"\nå˜é‡è¡¨");
 						O=(showno==_variw&&methi==i)?stdout:W;
 						fgetpos(F,&(m[i].tpos[_varip]));show4(F,W);
 						fprintf(O,"%+04X/",m[i].varii);	m[i].cocnt[_varip]=show2(F,O);
@@ -455,9 +455,9 @@ int main(int argc,char **argv){
 							fprintf(O,"\n");
 							if(k==m[methi].varis)	fprintf(O,"[");
 							if(k==getmousey()+m[methi].varii-1)	fprintf(O,"-");
-							fprintf(O,"¶¨ÒåÎ»ÖÃ={");	show2(F,O);	fprintf(O,"\t¿ÉÓÃ³¤¶È={");	show2(F,O);
-							fprintf(O,"\tÃû×Ö=#");		show2(F,O);	fprintf(O,"\tÀàĞÍ=#");		show2(F,O);
-							fprintf(O,"\t²ÛÎ»=[");		outv(F,O,0,m[i].vupos);
+							fprintf(O,"å®šä¹‰ä½ç½®={");	show2(F,O);	fprintf(O,"\tå¯ç”¨é•¿åº¦={");	show2(F,O);
+							fprintf(O,"\tåå­—=#");		show2(F,O);	fprintf(O,"\tç±»å‹=#");		show2(F,O);
+							fprintf(O,"\tæ§½ä½=[");		outv(F,O,0,m[i].vupos);
 						}
 					}else{
 //						O=(showno==_methw&&methi==i)?stdout:W;
@@ -502,13 +502,13 @@ int main(int argc,char **argv){
 			readconst(copos[show2(F,W)],s);
 			if(cmp(s,"SourceFile")){
 				read4(F,&temp4);
-				fprintf(O,"\nÔ´ÎÄ¼ş  #");
+				fprintf(O,"\næºæ–‡ä»¶  #");
 				outc(F,O,_string_text);
 			}
 		}
 		if(!feof(F)){
 		char c;fscanf(F,"%c",&c);
-		if(!feof(F))fprintf(O,"\nÎ´Íê´ıĞø");}
+		if(!feof(F))fprintf(O,"\næœªå®Œå¾…ç»­");}
 		while(!feof(F)){
 			unsigned char c;
 			fscanf(F,"%c",&c);
@@ -644,34 +644,34 @@ int main(int argc,char **argv){
 						unsigned short tn;
 						if(csug)
 						{inpc(F,O,C,_class_name);break;}
-						fprintf(O,"Àà=#");
+						fprintf(O,"ç±»=#");
 						tn=show2(F,O);
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"ÀàÃû -> ÎÄ±¾\n");	getchar();	getchar();	break;}
+						{fprintf(O,"ç±»å -> æ–‡æœ¬\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						break;
 					case 0X08:
 						if(csug)
 						{inpc(F,O,C,_string_text);break;}
-						fprintf(O,"×Ö·û´®=#");
+						fprintf(O,"å­—ç¬¦ä¸²=#");
 						tn=show2(F,O);
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"×Ö·û´® -> ÎÄ±¾\n");	getchar();	getchar();	break;}
+						{fprintf(O,"å­—ç¬¦ä¸² -> æ–‡æœ¬\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						break;
 					case 0X09:
 						if(csug)
 						{inpc(F,O,C,_class);break;}
-						fprintf(O,"×Ö¶Î=    #");
+						fprintf(O,"å­—æ®µ=    #");
 						tn=show2(F,O);
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X07)&&cchk)
-						{fprintf(O,"×Ö¶Î -> Àà + º¯Êı\n");	getchar();	getchar();	break;}
+						{fprintf(O,"å­—æ®µ -> ç±» + å‡½æ•°\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						
 						if(csug)
@@ -681,18 +681,18 @@ int main(int argc,char **argv){
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X0C)&&cchk)
-						{fprintf(O,"×Ö¶Î -> Àà + º¯Êı\n");	getchar();	getchar();	break;}
+						{fprintf(O,"å­—æ®µ -> ç±» + å‡½æ•°\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						break;
 					case 0X0A:
 						if(csug)
 						{inpc(F,O,C,_class);break;}
-						fprintf(O,"·½·¨=    #");
+						fprintf(O,"æ–¹æ³•=    #");
 						tn=show2(F,O);
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X07)&&cchk)
-						{fprintf(O,"·½·¨ -> Àà + º¯Êı\n");	getchar();	getchar();	break;}
+						{fprintf(O,"æ–¹æ³• -> ç±» + å‡½æ•°\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						
 						if(csug)
@@ -702,18 +702,18 @@ int main(int argc,char **argv){
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X0C)&&cchk)
-						{fprintf(O,"·½·¨ -> Àà + º¯Êı\n");	getchar();	getchar();	break;}
+						{fprintf(O,"æ–¹æ³• -> ç±» + å‡½æ•°\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						break;
 					case 0X0B:
 						if(csug)
 						{inpc(F,O,C,_class);break;}
-						fprintf(O,"½Ó¿Ú=    #");
+						fprintf(O,"æ¥å£=    #");
 						tn=show2(F,O);
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X07)&&cchk)
-						{fprintf(O,"½Ó¿Ú -> Àà + º¯Êı\n");	getchar();	getchar();	break;}
+						{fprintf(O,"æ¥å£ -> ç±» + å‡½æ•°\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						
 						if(csug)
@@ -723,7 +723,7 @@ int main(int argc,char **argv){
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X0C)&&cchk)
-						{fprintf(O,"½Ó¿Ú -> Àà + º¯Êı\n");	getchar();	getchar();	break;}
+						{fprintf(O,"æ¥å£ -> ç±» + å‡½æ•°\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						break;
 					case 0X0C:
@@ -734,7 +734,7 @@ int main(int argc,char **argv){
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"º¯Êı -> Ãû×Ö + ÀàĞÍ\n");	getchar();	getchar();	break;}
+						{fprintf(O,"å‡½æ•° -> åå­— + ç±»å‹\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						
 						if(csug)
@@ -744,7 +744,7 @@ int main(int argc,char **argv){
 						fprintf(O,"->#");rewind(stdin);
 						scanf("%X",&tn);rewind(stdin);
 						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"º¯Êı -> Ãû×Ö + ÀàĞÍ\n");	getchar();	getchar();	break;}
+						{fprintf(O,"å‡½æ•° -> åå­— + ç±»å‹\n");	getchar();	getchar();	break;}
 						writ2(C,&tn);
 						break;
 					default:
@@ -754,17 +754,17 @@ int main(int argc,char **argv){
 				goto file_end;
 			}else if(conss&&key(VK_OEM_MINUS)){
  				char c;
-				if(cupos[conss]){	fprintf(O,"ÕıÔÚÓÃ!");getchar();goto file_end;}
+				if(cupos[conss]){	fprintf(O,"æ­£åœ¨ç”¨!");getchar();goto file_end;}
 				if(chkc(conss,0X01)){
 					rewind(stdin);
-					fprintf(O,"È·¶¨?[Y/N]");
+					fprintf(O,"ç¡®å®š?[Y/N]");
 					scanf("%c",&c);
 					if(c!='Y'&&c!='y')	goto file_end;
 				}
 				delc(conss);
 			}else if(conss&&key(VK_OEM_PLUS)){
 				system("cls");
-				fprintf(O,"1:ÎÄ±¾\n2:NO/right_click\n3:ÕûÊı\n4:Ğ¡Êı\n5:³¤Êı\n6:³¤Ğ¡\n7:Àà\n8:×Ö·û´®\n9:×Ö¶Î\nA:·½·¨\nB:½Ó¿Ú\nC:º¯Êı\nÏÂÃæ:NOOOOOOOOOOOOO!!!!!!!!!!");
+				fprintf(O,"1:æ–‡æœ¬\n2:NO/right_click\n3:æ•´æ•°\n4:å°æ•°\n5:é•¿æ•°\n6:é•¿å°\n7:ç±»\n8:å­—ç¬¦ä¸²\n9:å­—æ®µ\nA:æ–¹æ³•\nB:æ¥å£\nC:å‡½æ•°\nä¸‹é¢:NOOOOOOOOOOOOO!!!!!!!!!!");
 				int k=0;
 				while(!key(VK_LBUTTON)){
 					if(key('2')||key(VK_RBUTTON)||key(VK_ESCAPE))	goto file_end;
@@ -828,8 +828,8 @@ int main(int argc,char **argv){
 				}
 				if(k==3){
 					system("cls");
-					printf("Êó±ê×ó¼üÑ¡Ôñ\tÓÒ¼ü²»Ñ¡\n");
-					printf("ÊäÈëÊı×ÖÊ±´òÎÊºÅ¿ÉÒÔÌø¹ı\n");
+					printf("é¼ æ ‡å·¦é”®é€‰æ‹©\tå³é”®ä¸é€‰\n");
+					printf("è¾“å…¥æ•°å­—æ—¶æ‰“é—®å·å¯ä»¥è·³è¿‡\n");
 					getchar();
 				}
 			}
@@ -870,8 +870,8 @@ int main(int argc,char **argv){
 				char s[256];read4(F,&temp4);
 				readconst(copos[temp4&0XFFFF],s);
 				if(cmp(s,"<init>"))
-				{system("cls");printf("²»ÄÜÉ¾initº¯Êı");goto file_end;} 
-				printf("È·¶¨?[T/F]");
+				{system("cls");printf("ä¸èƒ½åˆ initå‡½æ•°");goto file_end;} 
+				printf("ç¡®å®š?[T/F]");
 				if(getchar()=='T'){
 					FILE *C=fopen(inpnam,"rb+");
 					fsetpos(F,&(copos[concnt+3]));
@@ -996,7 +996,7 @@ int main(int argc,char **argv){
 						printf("OK");
 					}else if(s[i]=='*')
 						j++;
-					 else{printf("²»Àí½â%c",s[i]);
+					 else{printf("ä¸ç†è§£%c",s[i]);
 						key(VK_RETURN);
 						while(!key(VK_RETURN));}
 				}
@@ -1111,16 +1111,16 @@ int main(int argc,char **argv){
 				fsetpos(C,&tpos);
 				int tn;
 				rewind(stdin);
-				fprintf(O,"´Ó  ={\n");		tn=show2(F,O);
+				fprintf(O,"ä»  ={\n");		tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"µ½  ={\n");		tn=show2(F,O);
+				fprintf(O,"åˆ°  ={\n");		tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"´¦Àí={\n");	tn=show2(F,O);
+				fprintf(O,"å¤„ç†={\n");	tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"Àà±ğ:\n");	tn=show2(F,O);
+				fprintf(O,"ç±»åˆ«:\n");	tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
@@ -1209,10 +1209,10 @@ int main(int argc,char **argv){
 				fsetpos(C,&tpos);
 				int tn;
 				rewind(stdin);
-				tn=show2(F,O);	fprintf(O,"ĞĞ");
+				tn=show2(F,O);	fprintf(O,"è¡Œ");
 				fprintf(O,"->{");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				tn=show2(F,O);	fprintf(O,"ĞĞ");
+				tn=show2(F,O);	fprintf(O,"è¡Œ");
 				fprintf(O,"->{");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
@@ -1367,16 +1367,16 @@ int main(int argc,char **argv){
 				fsetpos(C,&tpos);
 				int tn;
 				rewind(stdin);
-				fprintf(O,"\n¶¨ÒåÎ»ÖÃ");	tn=show2(F,O);
+				fprintf(O,"\nå®šä¹‰ä½ç½®");	tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"\t¿ÉÓÃ³¤¶È");	tn=show2(F,O);
+				fprintf(O,"\tå¯ç”¨é•¿åº¦");	tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"\tÃû×Ö=#");		tn=show2(F,O);
+				fprintf(O,"\tåå­—=#");		tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"\tÀàĞÍ=#");		tn=show2(F,O);
+				fprintf(O,"\tç±»å‹=#");		tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
