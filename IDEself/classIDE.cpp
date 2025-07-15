@@ -5,21 +5,19 @@
 #include"me.cpp"
 #include<map>
 using namespace std;
-typedef unsigned long long ull;
-#define keydn(x) (GetAsyncKeyState(x)&0X8000)
-char *inpn;
+const char *inpn;
 #define inpnam inpn
-//#define inpnam "input.class"
-#define tnam "a.txt"
-//#define lockname "copy C:\\Users\\86139\\Desktop\\projects\\java\\test\\out\\production\\test\\mainclass.class input.class"
-#define lockname "copy java.class input.class"
+#define tnam "waste.txt"
+//#define lockname "copy ..\\java\\test\\out\\production\\test\\mainclass.class input.class"
+//#define lockname "copy java.class input.class"
+#define lockname "copy ..\\mods\\test\\net\\mcreator\\test\\TestMod.class input.class"
 struct posln{
 	fpos_t a=0;
-	posln *n=0;
+	posln* n=0;
 	int t;
 };
-map <int,fpos_t> copos;
-map <int,posln*> cupos;
+map<int,fpos_t> copos;
+map<int,posln*> cupos;
 struct lstln{
 	posln *a;
 	lstln *n=0;
@@ -29,54 +27,66 @@ struct lstln{
 	}
 };
 struct meth{
-	fpos_t tpos[8];
+	fpos_t tpos[8]={};
 	map <int,fpos_t> prpos;//code poses
 	map <int,posln*> vupos;//var user poses
 	map <int,posln*> pupos;//cod user poses
-	ull codei=00,trysi=00,linsi=00,varii=00,exmpi=00;
-	ull codes=-1,tryss=-1,linss=-1,varis=-1;
-	ull cocnt[8];
+	int codei=00,trysi=00,linsi=00,varii=00,exmpi=00;//index
+	int codes=-1,tryss=-1,linss=-1,varis=-1;//
+	int cocnt[8]={};
 } m[65536];
-int consi=0,methi=0,showno=0;//i=index
-int conss=0;//s=select<window>
-unsigned short concnt;//const_cnt
+struct fiel{
+	fpos_t tpos[8]={};
+} fe[65536];
+int consi=0X24,methi=0X00,fieli=0X01,showno=_fielw,conss=0X00;//s=select<window>
+fpos_t flen;
+int concnt;//const_cnt
 bool cchk=true,csug=true,cvew=true,dbf=false;//config
 void readconst(fpos_t pos,char *buf){
-	FILE *T=fopen(inpnam,"rb");	fsetpos(T,&pos);
-	char c;	fscanf(T,"%c",&c);	if(c!=1){	buf=0;	return;}
-	unsigned short num;	read2(T,&num);
+	r:FILE *T=fopen(inpnam,"rb+");
+	if(T==0){
+		fprintf(stderr,"readconst");getchar();
+		fclose(T);goto r;}
+	fsetpos(T,&pos);
+	char c;	fscanf(T,"%c",&c);
+	if(c!=1){
+		fprintf(stderr,"readconst");
+	buf[0]=0;fclose(T);	return;}
+	us num;	read2(T,&num);
 	for(int j=0;j<num;j++){	fscanf(T,"%c",buf+j);buf[j+1]=0;}
 	fclose(T);
 }
-void repc(posln *a,int b){
-	FILE *F=fopen(inpnam,"r+");
+void repc(posln *a,us b){
+	r:FILE *F=fopen(inpnam,"rb+");
+	if(F==0){fprintf(stderr,"repc");getchar();goto r;}
 	for(;a;a=a->n){
 		fsetpos(F,&(a->a));
 		if(a->t!=_short_class)
 			writ2(F,&b);
 		else
 			fprintf(F,"%c",(unsigned char)b);
+		printf("\n!%llX\n",a->a);
 	}
 	fclose(F);
+	printf("\n");
 }
 void addc(int x,int k){
 	for(int i=x;i<concnt-1;i++)
 		repc(cupos[i],i+1);
-	FILE *C=fopen(inpnam,"rb+");
-	copos[0]=copos[1]-2;
-	fsetpos(C,&(copos[0]));
-	concnt++;
-	writ2(C,&concnt);
+	r:FILE *C=fopen(inpnam,"rb+");
+	if(C==0){fprintf(stderr,"addc");getchar();goto r;}
+	copos[0]=copos[1]-2;	fsetpos(C,&(copos[0]));
+	concnt++;	writ2(C,&concnt);
 	fclose(C);
-	char s[16]={};
-	s[0]=k+1;
+	char s[16]={};	s[0]=k+1;
 	char n[16]={2,0,4,4,8,8,2,2,4,4,4,4};
 	finst(inpnam,copos[conss],s,n[k]+1);
 }
 void delc(int x){
 	for(int i=x+1;i<concnt;i++)
 		repc(cupos[i],i-1);
-	FILE *C=fopen(inpnam,"rb+");
+	r:FILE *C=fopen(inpnam,"rb+");
+	if(C==0){fprintf(stderr,"delc");getchar();goto r;}
 	copos[0]=copos[1]-2;
 	fsetpos(C,&(copos[0]));
 	concnt--;
@@ -84,106 +94,212 @@ void delc(int x){
 	fclose(C);
 	fdelt(inpnam,tnam,copos[conss],copos[conss+1]);
 }
-posln *fndu(posln *i,fpos_t a){
-	for(;i&&i->n->a>a;i=i->n);
-	return i;
-}
-unsigned short outc(FILE *F,FILE *O,int type){
+unsigned short outv(FILE *F,FILE *O,int type,map<int,posln*> &h){
 	fpos_t p;
 	fgetpos(F,&p);
-	unsigned short a=(type!=_short_class&&type!=_short_other)?show2(F,O):show1(F,O);
+	unsigned short a=(type!=_short_other&&type!=_short_other)?show2(F,O):show1(F,O);
 	posln *n=new posln;
-	n->n=cupos[a];
-	cupos[a]=n;//err
-	n->a=p;
-	n->t=type;
-	return a;//err
-}
-unsigned short outv(FILE *F,FILE *O,int type,map <int,posln*> h){
-	fpos_t p;
-	fgetpos(F,&p);
-	unsigned short a=(type!=_short_class)?show2(F,O):show1(F,O);
-	posln *n=new posln;
-	n->n=h[a];h[a]=n;
-	n->a=p;n->t=type;
+	n->n=h[a];	h[a]=n;//bug
+	n->a=p;		n->t=type;
 	return a;
 }
+#define outc(F,O,t) (outv(F,O,t,cupos))
+void printconst(FILE *F,FILE *O,int i,int m=1){
+	fpos_t C;	fgetpos(F,&C);
+	fsetpos(F,&(copos[i]));
+	char c;fscanf(F,"%c",&c);
+	switch (unsign(c)){
+		case 0X01:
+			fprintf(O,"Œƒ±æ=\t◊÷ ˝=");
+			unsigned j;
+			j=show2(F,O);	fprintf(O,"\t");
+			for(int k=0;k<j;k++){fscanf(F,"%c",&c);
+			if(k+32>=getweight()&&m==0)	continue;
+			switch (c) {
+				case '\\':	fprintf(O,"\\\\");break;
+				case '\n':	fprintf(O,"\\n");break;
+				case '\t':	fprintf(O,"\\t");break;
+				case '\a':	fprintf(O,"\\a");break;
+				case '\b':	fprintf(O,"\\b");break;
+				case '\f':	fprintf(O,"\\f");break;
+				case '\r':	fprintf(O,"\\r");break;
+				case '\v':	fprintf(O,"\\v");break;
+				case '\0':	fprintf(O,"\\0");break;
+				default:
+					if(c>=0X20&&c<=0X7F)	fprintf(O,"%c",c);
+					else{	fprintf(O,"\\x");	out1(O,c);}
+					break;
+				}
+			}
+			break;
+		case 0X03:
+			int ti;	read4(F,&ti);
+			fprintf(O,"’˚ ˝=   %+08X\t=%d",ti,ti);
+			break;
+		case 0X04:
+			float tf;	read4(F,&tf);
+			fprintf(O,"–° ˝=   %f",tf);
+			break;
+		case 0X05:
+			long long tl;	read8(F,&tl);
+			fprintf(O,"≥§ ˝=   %+016llX=\t%lld",tl,tl);
+			break;
+		case 0X06:
+			double td;	read8(F,&td);
+			fprintf(O,"≥§–°=   %lf",td);
+			break;
+		case 0X07:
+			us tn;
+			fprintf(O,"¿‡=\t    #");	tn=outc(F,O,_class_name);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X08:
+			fprintf(O,"◊÷¥Æ=\t    #");	tn=outc(F,O,_string_text);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X09:
+			fprintf(O,"◊÷∂Œ\t¿‡= #");	tn=outc(F,O,_class);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			fprintf(O,"\t∫Ø ˝=    #");	tn=outc(F,O,_info);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X0A:
+			fprintf(O,"∑Ω∑®\t¿‡= #");	tn=outc(F,O,_class);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			fprintf(O,"\t∫Ø ˝=    #");	tn=outc(F,O,_info);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X0B:
+			fprintf(O,"Ω”ø⁄\t¿‡= #");	tn=outc(F,O,_class);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			fprintf(O,"\t∫Ø ˝=    #");	tn=outc(F,O,_info);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X0C:
+			fprintf(O,"∫Ø ˝\t√˚◊÷#");	tn=outc(F,O,_info_name);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			fprintf(O,"\t¿‡–Õ=    #");	tn=outc(F,O,_info_type);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn);	fprintf(O,"\n");}
+			break;
+		case 0X0F:
+			fprintf(O,"0FŒƒ∑®\t√˚◊÷#");	tn=outc(F,O,_short_other);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			fprintf(O," \t∑Ω∑®#");		tn=outc(F,O,_method);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X10:
+			fprintf(O,"10◊÷¥Æ=\t   #");	tn=outc(F,O,_class_name);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		case 0X12:
+			fprintf(O,"12Œƒ∫Ø\t√˚◊÷#");	tn=outc(F,O,_string_text);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			fprintf(O,"\t∫Ø ˝#");		tn=outc(F,O,_info);
+			if(m==1){fprintf(O,"\n");	printconst(F,O,tn,1);	fprintf(O,"\n");}
+			break;
+		default:
+			fprintf(O,"∆Êπ÷≥£¡ø%X",unsign(c));
+//			fscanf(F,"%c",&c);
+			break;
+	}
+	if(m>0)	fsetpos(F,&C);
+}
 void inpc(FILE *F,FILE *O,FILE *C,int type){
-	int a[65536]={},p=0;
-	for(int i=0;i<65536;i++)
-		for(posln *j=cupos[i];j;j=j->n)
-			if(j->t==type){a[p++]=i;break;}
+	system("cls");
 	int conti=0;unsigned short c=0;
 	if(type!=_short_class)	read2(F,&c);
 	else	fscanf(F,"%c",&c);
+	printconst(F,O,c,1);
+	fprintf(O,"\nchange?[Y/ ]");
+	char tc=getchar();
+	if(tc!='Y'&&tc!='y')	return;
+	int a[65536]={},p=0;
+	for(int i=0;i<65536;i++)
+		for(posln *j=cupos[i];j;j=j->n)
+			if(j->t==type){a[p++]=i;break;}//bug
 	while(1){
 		system("cls");
-		fprintf(O,"ÂÄôÈÄâ=ËæìÂÖ•\n");
+		fprintf(O,"∫Ú—°V ÷±Ω” ‰»Î->\n");
 		for(int i=conti;i<conti+getheight()-2&&i<p;i++)
 			{if(getmousey()-1==i-conti)	fprintf(O,"->");	fprintf(O,"#%+04X\n",a[i]);}
 		int k=getmousey();
-		if(key(VK_UP)&&conti>0)
-			conti--;
-		if(key(VK_DOWN)&&conti<p)
-			conti++;
+		if(key(VK_UP)&&conti>0)		conti--;
+		if(key(VK_DOWN)&&conti<p)	conti++;
 		if(key(VK_LBUTTON)||key(VK_RETURN)){
-			if(key(VK_RETURN))
-				k=1;
-			if(k+conti>p)	return;
-			if(k+conti>0)	writ2(C,a+conti+k-1);
-			else{
-				inpn:
-				out2(O,c);
-				fprintf(O,"->");
-				scanf("%X",&c);rewind(stdin);
+			if(key(VK_RETURN))	k=1;
+			if(k+conti>p)		return;
+			if(k+conti>0)		writ2(C,a+conti+k-1);
+			if(k+conti==0){inpn:
+				out2(O,c);	fprintf(O,"->");	scanf("%X",&c);rewind(stdin);
 				key(VK_RETURN);
 				if(type!=_short_class)	writ2(C,&c);
 				else	fprintf(C,"%c",c);
-			}
-			return;
+			}	return;
 		}
-		if(key(VK_SHIFT))
-			goto inpn;
-		if(key(VK_ESCAPE)||key(VK_RBUTTON))
-			return;
+		if(key(VK_SHIFT))	goto inpn;
+		if(key(VK_ESCAPE)||key(VK_RBUTTON))	return;
 	}
 }
 bool chkc(int p,int t){
-	FILE *T=fopen(inpnam,"rb+");
-	fsetpos(T,&(copos[p]));
+	r:FILE *T=fopen(inpnam,"rb+");
+	if(T==0){fprintf(stderr,"chkc");getchar();goto r;}
+	fsetpos(T,&(copos[p]));//bug
 	char c;
 	fscanf(T,"%c",&c);
-	return c==t;
+	return c==t||p==0;
 	fclose(T);
 }
+us fndc(const char c[256]){
+	int ti=0;char b[256];
+	for(int i=1;i<concnt;i++)
+	if(chkc(i,1)){
+		readconst(copos[i],b);
+		if(cmp(b,"Code"))
+		{ti=i;break;}
+	}
+	if(ti==0){
+		ti=concnt;
+		b[0]=1;
+		for(int i=0;c[i];i++)
+		{b[i+2]=c[i];b[1]=i;}
+		finst(inpnam,copos[ti],b,b[1]+2);
+	}	return ti;
+}
 void delall(){
-	//const_pos
 	for(int i=1;i<concnt;i++){
 		for(;cupos[i];cupos[i]=cupos[i]->n)
 			delete cupos[i];}
-}
+}//bug
 //=============================================
 int main(int argc,char **argv){
-	inpn=argv[1];
-	//system(lockname);
+//	inpn=argv[1];
+//	hwnd=gmyhwnd();
+	inpn="input.class";
+	system(lockname);
 	bool _tofile=false;
 	FILE *E;
+//	FILE *F=fopen(inpnam,"rb+");
+//	if(F==0){printf("¥Úø™Œƒº˛");
+//	scanf("%s",inpn);}
+//	fclose(F);
 	while(1){
 	if(key(VK_LEFT)&&showno>0)	showno--;
-	if(key(VK_RIGHT)&&showno<8)	showno++;
-	if(GetForegroundWindow()==hwnd){
+	if(key(VK_RIGHT)&&showno<_endw)	showno++;
+	if(issel(hwnd)){
 		file_start:
 		system("cls");
 		delall();
 		FILE *F=fopen(inpnam,"rb+");
-		FILE *O=stdout,*W=fopen("waste.txt","w");
-		if(F==0){	printf("mF");return 0;}
+		FILE *O;
+		FILE *W=fopen("waste.txt","wb");
+		freopen("nothing.txt","w",stderr);
+		if(F==0||W==0){	printf("¥Ú≤ªø™");getchar();continue;}
 		rewind(stdin);
 		//infos
 		O=(showno==_flagw)?stdout:W;
 		if(_tofile)	O=E;
 		unsigned temp4;read4(F,&temp4);
-		if(temp4!=0XCAFEBABE){printf("not a file");return 0;}
+		if(temp4!=0XCAFEBABE){printf("not a file");getchar();return 0;}
 		fprintf(O,"ver:");show4(F,O);
 		//infos
 	#define O_CONST_myIDE
@@ -206,184 +322,116 @@ int main(int argc,char **argv){
 			out2(O,i);
 			fprintf(O,"\t");
 			fgetpos(F,&(copos[i]));
-			char c;fscanf(F,"%c",&c);
-			switch (unsign(c)){
-				case 0X01:
-					fprintf(O,"ÊñáÊú¨=\tÂ≠óÊï∞=");
-					unsigned j;
-					j=show2(F,O);	fprintf(O,"\t");
-					for(;j>0;j--){fscanf(F,"%c",&c);
-					switch (c) {
-						case '\\':
-							fprintf(O,"\\\\ ");break;
-						case '\n':
-							fprintf(O,"\\n");break;
-						case '\t':
-							fprintf(O,"\\t");break;
-						case '\a':
-							fprintf(O,"\\a");break;
-						case '\b':
-							fprintf(O,"\\b");break;
-						case '\f':
-							fprintf(O,"\\f");break;
-						case '\r':
-							fprintf(O,"\\r");break;
-						case '\v':
-							fprintf(O,"\\v");break;
-						case '\0':
-							fprintf(O,"\\0");break;
-						default:
-							if(c>=0X20&&c<=0X7F)
-								fprintf(O,"%c",c);
-							else{
-								fprintf(O,"\\x");
-								out(O,c);}
-							break;
-						}
-					}
-					break;
-				case 0X03:
-					int ti;
-					read4(F,&ti);
-					fprintf(O,"Êï¥Êï∞=   %+08X\t=%d",ti,ti);
-					break;
-				case 0X04:
-					float tf;
-					read4(F,&tf);
-					fprintf(O,"Â∞èÊï∞=   %f",tf);
-					break;
-				case 0X05:
-					long long tl;
-					read8(F,&tl);
-					fprintf(O,"ÈïøÊï∞=   %+016llX=\t%lld",tl,tl);
-					break;
-				case 0X06:
-					double td;
-					read8(F,&td);
-					fprintf(O,"ÈïøÂ∞è=   %lf",td);
-					break;
-				case 0X07:
-					fprintf(O,"Á±ª=\t    #");
-					outc(F,O,_class_name);
-					break;
-				case 0X08:
-					fprintf(O,"Â≠ó‰∏≤=\t    #");
-					outc(F,O,_string_text);
-					break;
-				case 0X09:
-					fprintf(O,"Â≠óÊÆµ\tÁ±ª= #");
-					outc(F,O,_class);
-					fprintf(O,"\tÂáΩÊï∞=    #");
-					outc(F,O,_info);
-					break;
-				case 0X0A:
-					fprintf(O,"ÊñπÊ≥ï\tÁ±ª= #");
-					outc(F,O,_class);
-					fprintf(O,"\tÂáΩÊï∞=    #");
-					outc(F,O,_info);
-					break;
-				case 0X0B:
-					fprintf(O,"Êé•Âè£\tÁ±ª= #");
-					outc(F,O,_class);
-					fprintf(O,"\tÂáΩÊï∞=    #");
-					outc(F,O,_info);
-					break;
-				case 0X0C:
-					fprintf(O,"ÂáΩÊï∞\tÂêçÂ≠ó#");
-					outc(F,O,_info_name);
-					fprintf(O,"\tÁ±ªÂûã=    #");
-					outc(F,O,_info_type);
-					break; 
-				default:
-					//TODO
-					break;
-			}
+			printconst(F,O,i,0);
 		}
 		fgetpos(F,&(copos[concnt]));
 		O=(showno==_consw)?stdout:W;
-		fprintf(O,"\nconst%x",conss);
+//		fprintf(O,"\nconst%+04x",conss);
 		//const
 	#define O_FLAG_myIDE
 		//flag
-		
 		rewind(W);
 		O=(showno==_flagw)?stdout:W;
 		if(_tofile)	O=E;
 		openflagsR(F,O);
-		fprintf(O,"\nthis=   #");	outc(F,O,_class);
-		fprintf(O,"\nsuper   #");	outc(F,O,_class);
+		fprintf(O,"\nŒ“Ω–:   #");	outc(F,O,_class);
+		fprintf(O,"\nµ˘ «:   #");	outc(F,O,_class);
 		fgetpos(F,&(copos[concnt+1]));
 		//flag
-	#define O_CONFIG_myIDE
+		
 		//debug
 		rewind(W);
 		O=(showno==_confw?stdout:W);
 		if(_tofile)	O=W;
-		fprintf(O,"Â∏∏ÈáèÊ£ÄÊü•=%d\n",cchk);
-		fprintf(O,"Â∏∏ÈáèÂª∫ËÆÆ=%d\n",csug);
-		fprintf(O,"ËæìÂá∫\n");
-		fprintf(O,"Â∏ÆÂä©\n");
+		fprintf(O,"≥£¡øºÏ≤È=%d\n",cchk);
+		fprintf(O,"≥£¡øΩ®“È=%d\n",csug);
+		fprintf(O," ‰≥ˆ\n");
+		fprintf(O,"∞Ô÷˙\n");
+		fprintf(O,"¥Úø™Œƒº˛\n");
 		//debug
-		
+	#define O_INTF_myIDE
 		//interface
-		unsigned short intercnt;
-		read2(F,&intercnt);
+		O=(showno==_intfw)?stdout:W;
+		fprintf(O,"Ω”ø⁄:");
+		us intercnt=show2(F,O);
 		fgetpos(F,&(copos[concnt+2]));
 		//interface
 		
 		//field
-		unsigned short fieldcnt;
-		read2(F,&fieldcnt);
+		O=(showno==_fielw)?stdout:W;
+		fprintf(O,"◊÷∂Œ:");			out2(O,fieli);
+		fprintf(O,"/");	us fieldcnt=show2(F,O);
 		fgetpos(F,&(copos[concnt+3]));
+		for(int i=0;i<fieldcnt;i++){
+			fgetpos(F,&(fe[i].tpos[_fielp]));
+			O=(showno==_fielw&&fieli==i)?stdout:W;
+			openflagsR(F,O);
+			fprintf(O,"\n√˚◊÷:");outc(F,O,_string_text);
+			fprintf(O,"\n¿‡–Õ:");outc(F,O,_info_type);
+			fprintf(O,"\n∏Ωº”:");us temp=show2(F,O);
+			fprintf(O,"[+][*][-]");
+			char buf[256];
+			for(int j=0;j<temp;j++){
+				readconst(copos[show2(F,W)],buf);fprintf(O,"\n-------#%X",j);
+				if(cmp(buf,"ConstantValue")){
+					fgetpos(F,&fe[i].tpos[_consp]);
+					show4(F,W);
+					mktab(O,1);	fprintf(O," «≥£¡ø:");show2(F,O);
+				}
+			}
+		}
 		//field
 	#define O_METHOD_myIDE
 		//method
-		unsigned short methocnt;
-		read2(F,&methocnt);
 		O=(showno==_methw)?stdout:W;
 		if(_tofile)	O=E;
-		fprintf(O,"method:");	out2(O,methi);
-		fprintf(O,"/");			out2(O,methocnt);
+		fprintf(O,"∑Ω∑®:");			out2(O,methi);
+		fprintf(O,"/");	us methocnt=show2(F,O);
 		for(int i=0;i<methocnt;i++){
 			rewind(W);
 			for(int j=0;j<8;j++)
-			{m[i].cocnt[j]=-1;m[j].tpos[j]=-1;}
+			{m[i].cocnt[j]=-1;m[i].tpos[j]=-1;}
 			O=(showno==_methw&&methi==i)?stdout:W;
 			if(_tofile)	O=E;
 			fgetpos(F,&(m[i].tpos[_methp]));
 			openflagsR(F,O);
-			fprintf(O,"\nÂêçÂ≠ó:\t#");	outc(F,O,_method_name);
-			fprintf(O,"\nÁ±ªÂûã:\t#");	outc(F,O,_method_type);
+			fprintf(O,"\n√˚◊÷:\t#");	outc(F,O,_method_name);
+			fprintf(O,"\n¿‡–Õ:\t#");	outc(F,O,_method_type);
 			show2(F,W);
 			int typ=outc(F,W,_atri_type);
 			char s[256]={};readconst(copos[typ],s);
 			if(cmp(s,"Code")){
 	#define O_CODE_myIDE
 				fgetpos(F,&(m[i].tpos[_codep]));
-				fprintf(O,"\n‰ª£Á†Å");	show4(F,O);
+				fprintf(O,"\n¥˙¬Î");	show4(F,O);
 				O=(showno==_codew&&methi==i)?stdout:W;
-				fprintf(O,"Ê†àÂ§ßÂ∞è=");	show2(F,O);
-				fprintf(O,"\tÂèòÈáèÊï∞=");	show2(F,O);
-				fprintf(O,"\tÈïøÂ∫¶=");
+				fprintf(O,"’ª¥Û–°=");	show2(F,O);
+				fprintf(O,"\t±‰¡ø ˝=");	show2(F,O);
+				fprintf(O,"\t≥§∂»=");
 				unsigned len;		len=show4(F,O);
 				rewind(W);
 				fprintf(O,"\n");
-				FILE *T=fopen("bytecode.txt","r");
+				FILE *T=fopen("bytecode.txt","rb");
+				if(T->_file>10)	printf("398!!!");
+				if(T==0){printf("T@398");return 0;}
 				O=W;
 				m[i].cocnt[_codep]=0;
 				for(int j=0;j<len;){
-//					O=(showno==_codew&&methi==i&&k>=m[i].codei&&k<m[i].codei+getheight()-2)?stdout:W;
+//					O=(showno==_codew&&methi==i&&j>=m[i].codei&&j<m[i].codei+getheight()-2)?stdout:W;
 					if(_tofile)	O=E;
+//					if(j==m[i].codes)	printf("[");
+//					if(j==m[i].codei+getmousey()-1)printf("-");
 					fgetpos(F,&(m[i].prpos[m[i].cocnt[_codep]]));
 					int ct=unsign(show1(F,O));
 					fpos_t tpos=(ct)*11;	fsetpos(T,&tpos);
 					for(int k=0;k<9;k++){	char c;	fscanf(T,"%c",&c);	fprintf(O,"%c",c);	}
 					if(ct==0X10){	show1(F,O);	j++;}
+					if(ct==0X11){	show2(F,O);	j+=2;}
 					if(ct==0X12){	fprintf(O,"#");	outc(F,O,_short_other);	j++;	}
 					if(ct==0X13||ct==0X14){	show2(F,O);	j+=2;	}
-					if(ct>=0X15&&ct<=0X19){	fprintf(O,"#");	outv(F,O,0,m[i].vupos);	j++;	}
-					if(ct==0X36||ct==0X38||ct==0X3A){	fprintf(O,"[");	outv(F,O,0,m[i].vupos);	j++;}
-					if(ct==0X84){	fprintf(O,"[");	outv(F,O,0,m[i].vupos);	fprintf(O,"+");	show1(F,O);	j+=2;	}
+					if(ct>=0X15&&ct<=0X19){	fprintf(O,"#");	outv(F,O,_short_other,m[i].vupos);	j++;	}
+					if(ct==0X36||ct==0X38||ct==0X3A){	fprintf(O,"[");	outv(F,O,_short_other,m[i].vupos);	j++;}
+					if(ct==0X84){	fprintf(O,"[");	outv(F,O,_short_other,m[i].vupos);	fprintf(O,"+");	show1(F,O);	j+=2;	}
 					if(ct>=0XB2&&ct<=0XB3){	fprintf(O,"#");	outc(F,O,_info);	j+=2;	}
 					if(ct>=0XB6&&ct<=0XBA){	fprintf(O,"#");	outc(F,O,_info);	j+=2;	}
 					if(ct==0XBB){	fprintf(O,"#");	outc(F,O,_class);	j+=2;	}
@@ -391,7 +439,8 @@ int main(int argc,char **argv){
 					fprintf(O,"\n");
 				}
 				fgetpos(F,&(m[i].prpos[m[i].cocnt[_codep]]));
-				freopen("waste.txt","r+",W);
+//				if(i==methi)	printf("%llX/",(m[methi].prpos[m[methi].cocnt[_codep]]));
+				freopen("waste.txt","rb+",W);
 				for(int j=0;j<m[i].cocnt[_codep];j++){
 					char c=0;
 					if(showno==_codew&&methi==i&&j>=m[i].codei&&j<m[i].codei+getheight()-2){
@@ -402,14 +451,14 @@ int main(int argc,char **argv){
 						if(showno==_codew&&methi==i&&j>=m[i].codei&&j<m[i].codei+getheight()-2)
 						printf("%c",c);
 					}
-				}
-				freopen("waste.txt","w",W);
+				}fclose(T);
+//				printf(" %d ",m[i].cocnt[_codep]);
+				freopen("waste.txt","wb",W);
 				O=(showno==_codew&&methi==i)?stdout:W;
 				fprintf(O,"%+08X/%+08X",m[i].codei,m[i].cocnt[_codep]);
-				fclose(T);
 				O=(showno==_methw&&methi==i)?stdout:W;
 				if(_tofile)	O=E;
-				fprintf(O,"\nÈîôËØØÂ§ÑÁêÜ");
+				fprintf(O,"\n¥ÌŒÛ¥¶¿Ì");
 				O=(showno==_trysw&&methi==i)?stdout:W;
 				if(_tofile)	O=E;
 				fgetpos(F,&(m[i].tpos[_trysp]));
@@ -417,10 +466,10 @@ int main(int argc,char **argv){
 				for(int j=0;j<m[i].cocnt[_trysp];j++){
 					O=(showno==_trysw&&methi==i&&j>=m[i].trysi&&j<m[i].trysi+getheight())?stdout:W;
 					if(_tofile)	O=E;
-					fprintf(O,"\n‰ªé  ={\t");	show2(F,O);
-					fprintf(O,"\tÂà∞  ={\t");	show2(F,O);
-					fprintf(O,"\tÂ§ÑÁêÜ={\t");	show2(F,O);
-					fprintf(O,"\tÁ±ªÂà´:\t");		show2(F,O);
+					fprintf(O,"\n¥”  ={\t");	show2(F,O);
+					fprintf(O,"\tµΩ  ={\t");	show2(F,O);
+					fprintf(O,"\t¥¶¿Ì={\t");	show2(F,O);
+					fprintf(O,"\t¿‡±:\t");		show2(F,O);
 				}
 	#define O_ATRI_myIDE
 				unsigned short atril;
@@ -431,88 +480,91 @@ int main(int argc,char **argv){
 					typ=outc(F,W,_atri_type);
 					readconst(copos[typ],s);
 					if(cmp(s,"LineNumberTable")){
-						fprintf(O,"\nË°åÊï∞Ë°®");
+						fprintf(O,"\n–– ˝±Ì");
 						O=(showno==_linsw&&methi==i)?stdout:W;
 						fgetpos(F,&(m[i].tpos[_linsp]));show4(F,W);
-						fprintf(O,"%+04X/",m[i].linsi);	m[i].cocnt[_linsp]=show2(F,O);
+						fprintf(O,"%+04X/%+04X/",m[i].linsi,m[i].linss);	m[i].cocnt[_linsp]=show2(F,O);
 						for(int k=0;k<m[i].cocnt[_linsp];k++){
 							O=(showno==_linsw&&methi==i&&k>=m[i].linsi&&k<m[i].linsi+getheight())?stdout:W;
 							if(_tofile)	O=E;
 							fprintf(O,"\n");
-							if(k==m[methi].linss)	fprintf(O,"[");
-							if(k==getmousey()+m[methi].linsi-1)	fprintf(O,"-");
-							show2(F,O);	fprintf(O,"Ë°å-\t");	show2(F,O);	fprintf(O,"Ë°å");
+							if(k==m[i].linss)	fprintf(O,"[");
+							if(k==getmousey()+m[i].linsi-1)	fprintf(O,"-");
+							show2(F,O);	fprintf(O,"––-\t");	show2(F,O);	fprintf(O,"––");
 						}
 					}else
 					if(cmp(s,"LocalVariableTable")){
-						fprintf(O,"\nÂèòÈáèË°®");
+						fprintf(O,"\n±‰¡ø±Ì");
 						O=(showno==_variw&&methi==i)?stdout:W;
 						fgetpos(F,&(m[i].tpos[_varip]));show4(F,W);
-						fprintf(O,"%+04X/",m[i].varii);	m[i].cocnt[_varip]=show2(F,O);
+						fprintf(O,"%+04X/%+04X/",m[i].varii,m[i].varis);	m[i].cocnt[_varip]=show2(F,O);
 						for(int k=0;k<m[i].cocnt[_varip];k++){
 							O=(showno==_variw&&methi==i&&k>=m[i].varii&&k<m[i].varii+getheight())?stdout:W;
 							if(_tofile)	O=E;
 							fprintf(O,"\n");
-							if(k==m[methi].varis)	fprintf(O,"[");
-							if(k==getmousey()+m[methi].varii-1)	fprintf(O,"-");
-							fprintf(O,"ÂÆö‰πâ‰ΩçÁΩÆ={");	show2(F,O);	fprintf(O,"\tÂèØÁî®ÈïøÂ∫¶={");	show2(F,O);
-							fprintf(O,"\tÂêçÂ≠ó=#");		show2(F,O);	fprintf(O,"\tÁ±ªÂûã=#");		show2(F,O);
-							fprintf(O,"\tÊßΩ‰Ωç=[");		outv(F,O,0,m[i].vupos);
+							if(k==m[i].varis)	fprintf(O,"[");
+							if(k==getmousey()+m[i].varii-1)	fprintf(O,"-");
+							fprintf(O,"∂®“ÂŒª÷√={");	show2(F,O);	fprintf(O,"\tø…”√≥§∂»={");	show2(F,O);
+							fprintf(O,"\t√˚◊÷=#");		show2(F,O);	fprintf(O,"\t¿‡–Õ=#");		show2(F,O);
+							fprintf(O,"\t≤€Œª=[");		outv(F,O,0,m[i].vupos);
 						}
-					}else{
-//						O=(showno==_methw&&methi==i)?stdout:W;
-						O=stdout;
-						fprintf(O,"\n%X???%X:\n",j,typ);
-						fpos_t tpos;
-						fgetpos(F,&tpos);
-						fprintf(O,"%llX ",tpos);
-						show(F,show4(F,O));
-//						return 0;
+						fprintf(O,"\n%X",getmousey()+m[i].varii-1);
 					}
+//					else{
+////						O=(showno==_methw&&methi==i)?stdout:W;
+//						O=stdout;
+//						printf("\n:%d???%X %s\n",j,typ,s);
+//						fpos_t tpos;
+//						fgetpos(F,&tpos);
+//						printf("@%llX:\n",tpos);
+////						show(F,show4(F,stderr));
+////						return 0;
+//					}
 				}
-				fgetpos(F,&(m[methi].tpos[_endmp]));
 			}//else return 0;
-			else{	printf("??%X%s",typ,s);return 0;}
+//			else{	printf("\n:%d??%X %s\n",i,typ,s);fpos_t tpos;
+//			fgetpos(F,&tpos);printf("@%llX:\n",tpos);getchar();return 0;}
+//			fgetpos(F,&(m[i].tpos[_endmp]));
 		}
 		//code
-		if(E)
-			fclose(E);
+		if(E)	fclose(E);
 		rend:
 		_tofile=false;
 	#define O_EXMP_myIDE
 		map<int,int> codln;
+		FILE *T=fopen("bytecode_extension.txt","rb");
 		O=(showno==_exmpw)?stdout:W;
-		FILE *T=fopen("bytecode_extension.txt","r");
+		fprintf(O,"≤È’“\n");
 		for(int i=0;!feof(T);i++){
 			codln[i]=1;
 			fscanf(T,"%d ",&codln[i]);
+			O=(showno==_exmpw&&i>=m[methi].exmpi&&i<m[methi].exmpi-2+getheight())?stdout:W;
+			fprintf(O,"%+02X",i);
 			char c;
 			do{
 				fscanf(T,"%c",&c);
-				if(i>=m[methi].exmpi&&
-				i<m[methi].exmpi-1+getheight())
 					fprintf(O,"%c",c);
 			}while(c!='\n');
-		}
+		}fclose(T);
 		O=(showno==_flagw)?stdout:W;
-		unsigned short temp;
-		read2(F,&temp);
+		us temp=show2(F,W);
 		for(int i=0;i<temp;i++){
 			char s[256];
 			readconst(copos[show2(F,W)],s);
 			if(cmp(s,"SourceFile")){
 				read4(F,&temp4);
-				fprintf(O,"\nÊ∫êÊñá‰ª∂  #");
+				fprintf(O,"\n‘¥Œƒº˛  #");
 				outc(F,O,_string_text);
 			}
 		}
+		fgetpos(F,&flen);
 		if(!feof(F)){
 		char c;fscanf(F,"%c",&c);
-		if(!feof(F))fprintf(O,"\nÊú™ÂÆåÂæÖÁª≠");}
+		if(!feof(F))fprintf(O,"\nŒ¥ÕÍ¥˝–¯");}
 		while(!feof(F)){
 			unsigned char c;
 			fscanf(F,"%c",&c);
-			out(O,c);
+			out1(O,c);
 			fpos_t tpos;
 			fgetpos(F,&tpos);
 			fprintf(O,"---%p\n",tpos);
@@ -520,30 +572,15 @@ int main(int argc,char **argv){
 	#define I_CONST_myIDE
 		O=stdout;
 		if(showno==_consw){
-		 if(key(VK_RBUTTON)||key(VK_ESCAPE))
-			conss=0;
-		 else if(consi>0
-		 &&conss<=0&&key(VK_UP))
-			consi--;
-		 else if(consi<concnt
-		 &&conss<=0&&key(VK_DOWN))
-			consi++;
-		 else if(conss!=getmousey()+consi&&
-		getmousey()+consi<concnt&&
-		getmousey()>0&&
-		getmousey()<getheight()-1&&key(VK_LBUTTON))
-			conss=getmousey()+consi;
-		 else if(conss!=consi+1&&key(VK_RETURN))
-			conss=consi+1;
-		 else if(conss&&conss>1&&key(VK_UP)){
+		stdlop(conss,consi,concnt,_consw);
+			  if(conss>0&&conss>1&&key(VK_UP)){
 			repc(cupos[conss-1],conss);
 			repc(cupos[conss],conss-1);
 			fswap(inpnam,copos[conss-1],copos[conss],copos[conss+1]);
 			conss--;
 			if(consi>0)
 				consi--;
-		}else if(conss>0
-		&&conss<concnt-1&&key(VK_DOWN)){
+		}else if(conss>0&&conss<concnt-1&&key(VK_DOWN)){
 			repc(cupos[conss+1],conss);
 			repc(cupos[conss],conss+1);
 			fswap(inpnam,copos[conss],copos[conss+1],copos[conss+2]);
@@ -554,11 +591,12 @@ int main(int argc,char **argv){
 		&&getmousey()==conss-consi&&key(VK_LBUTTON))
 		||(conss==consi+1&&key(VK_RETURN))){
 			system("cls");
-			cedit:
+			printconst(F,O,conss,1);printf("\nchange?[Y/ ]");
+			char tc=getchar();
+			if(tc!='Y'&&tc!='y')	goto file_end;
 			FILE *C=fopen(inpnam,"rb+");
 			fsetpos(F,&(copos[conss]));
 			fsetpos(C,&(copos[conss]));
-			fprintf(O,"input'?'to blank\n");
 			char c;fscanf(F,"%c",&c);
 			fprintf(C,"%c",c);
 				switch (c){
@@ -610,29 +648,26 @@ int main(int argc,char **argv){
 							finst(inpnam,tmppos,s,tln);
 						}
 						break;
+#define incn2(a,t,o) fprintf(O,a);	tn=show2(F,O);	fprintf(O,"->#");rewind(stdin);	scanf("%X",&tn);rewind(stdin);	if(!chkc(tn,t)&&cchk)	{fprintf(O,o);	getchar();	getchar();	break;}	writ2(C,&tn);
+#define incn1(a,t,o) fprintf(O,a);	tc=show1(F,O);	fprintf(O,"->#");rewind(stdin);	scanf("%X",&tc);rewind(stdin);	if(!chkc(tc,t)&&cchk)	{fprintf(O,o);	getchar();	getchar();	break;}	writ1(C,&tc);
+//Œ a ¿‡–Õ∑«t-> ‰≥ˆo 
 					case 0X03:
-						int ti;
-						read4(F,&ti);
+						int ti;		read4(F,&ti);
 						fprintf(O,"%+08X=%d->",ti,ti);
 						if(!scanf("%X%*2s",&ti))
 							scanf("%*2s%d",&ti);
-						writ4(C,&ti);
-						break;
+						writ4(C,&ti);	break;
 					case 0X04:
-						float tf;
-						read4(F,&tf);
+						float tf;	read4(F,&tf);
 						fprintf(O,"%f->",tf);
 						scanf("%f",&tf);
-						writ4(C,&tf);
-						break;
+						writ4(C,&tf);	break;
 					case 0X05:
-						long long tl;
-						read8(F,&tl);
+						long long tl;	read8(F,&tl);
 						fprintf(O,"%+016llX=%lld->",tl);
 						if(!scanf("%llX%*2s",&tl))
 							scanf("%*2s%lld",&tl);
-						writ8(C,&tl);
-						break;
+						writ8(C,&tl);	break;
 					case 0X06:
 						double td;
 						read8(F,&td);
@@ -641,130 +676,69 @@ int main(int argc,char **argv){
 						writ8(C,&td);
 						break;
 					case 0X07:
-						unsigned short tn;
-						if(csug)
-						{inpc(F,O,C,_class_name);break;}
-						fprintf(O,"Á±ª=#");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"Á±ªÂêç -> ÊñáÊú¨\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
+						unsigned short tn;unsigned char tc;
+						if(csug){inpc(F,O,C,_class_name);break;}
+						incn2("¿‡=      #",0X01,"¿‡√˚ -> Œƒ±æ\n");
 						break;
 					case 0X08:
-						if(csug)
-						{inpc(F,O,C,_string_text);break;}
-						fprintf(O,"Â≠óÁ¨¶‰∏≤=#");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"Â≠óÁ¨¶‰∏≤ -> ÊñáÊú¨\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
+						if(csug){inpc(F,O,C,_string_text);break;}
+						incn2("◊÷∑˚¥Æ=  #",0X01,"◊÷∑˚¥Æ -> Œƒ±æ\n");
 						break;
 					case 0X09:
-						if(csug)
-						{inpc(F,O,C,_class);break;}
-						fprintf(O,"Â≠óÊÆµ=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X07)&&cchk)
-						{fprintf(O,"Â≠óÊÆµ -> Á±ª + ÂáΩÊï∞\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
-						
-						if(csug)
-						{inpc(F,O,C,_info);break;}
-						fprintf(O,"info=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X0C)&&cchk)
-						{fprintf(O,"Â≠óÊÆµ -> Á±ª + ÂáΩÊï∞\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
+						if(csug){inpc(F,O,C,_class);inpc(F,O,C,_info);	break;}
+						incn2("◊÷∂Œ=    #",0X07,"◊÷∂Œ -> ¿‡ + ∫Ø ˝\n");
+						incn2("info=    #",0X0C,"◊÷∂Œ -> ¿‡ + ∫Ø ˝\n");
 						break;
 					case 0X0A:
-						if(csug)
-						{inpc(F,O,C,_class);break;}
-						fprintf(O,"ÊñπÊ≥ï=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X07)&&cchk)
-						{fprintf(O,"ÊñπÊ≥ï -> Á±ª + ÂáΩÊï∞\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
-						
-						if(csug)
-						{inpc(F,O,C,_info);break;}
-						fprintf(O,"info=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X0C)&&cchk)
-						{fprintf(O,"ÊñπÊ≥ï -> Á±ª + ÂáΩÊï∞\n");	getchar();	getchar();	break;}
+						if(csug){inpc(F,O,C,_class);inpc(F,O,C,_info);	break;}
+						incn2("∑Ω∑®=    #",0X07,"∑Ω∑® -> ¿‡ + ∫Ø ˝\n");
+						incn2("info=    #",0X0C,"∑Ω∑® -> ¿‡ + ∫Ø ˝\n");
 						writ2(C,&tn);
 						break;
 					case 0X0B:
-						if(csug)
-						{inpc(F,O,C,_class);break;}
-						fprintf(O,"Êé•Âè£=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X07)&&cchk)
-						{fprintf(O,"Êé•Âè£ -> Á±ª + ÂáΩÊï∞\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
-						
-						if(csug)
-						{inpc(F,O,C,_info);break;}
-						fprintf(O,"info=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X0C)&&cchk)
-						{fprintf(O,"Êé•Âè£ -> Á±ª + ÂáΩÊï∞\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
+						if(csug){inpc(F,O,C,_class);inpc(F,O,C,_info);	break;}
+						incn2("Ω”ø⁄=    #",0X07,"Ω”ø⁄ -> ¿‡ + ∫Ø ˝\n");
+						incn2("info=    #",0X0C,"Ω”ø⁄ -> ¿‡ + ∫Ø ˝\n");
 						break;
 					case 0X0C:
-						if(csug)
-						{inpc(F,O,C,_info_name);break;}
-						fprintf(O,"info= #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"ÂáΩÊï∞ -> ÂêçÂ≠ó + Á±ªÂûã\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
-						
-						if(csug)
-						{inpc(F,O,C,_info_type);break;}
-						fprintf(O,"name=    #");
-						tn=show2(F,O);
-						fprintf(O,"->#");rewind(stdin);
-						scanf("%X",&tn);rewind(stdin);
-						if(!chkc(tn,0X01)&&cchk)
-						{fprintf(O,"ÂáΩÊï∞ -> ÂêçÂ≠ó + Á±ªÂûã\n");	getchar();	getchar();	break;}
-						writ2(C,&tn);
+						if(csug){inpc(F,O,C,_info_name);inpc(F,O,C,_info_type);	break;}
+						incn2("info=    #",0X01,"∫Ø ˝ -> √˚◊÷ + ¿‡–Õ\n");
+						incn2("name=    #",0X01,"∫Ø ˝ -> √˚◊÷ + ¿‡–Õ\n");
+						break;
+					case 0X0F:
+						if(csug){inpc(F,O,C,_info_name);inpc(F,O,C,_info_type);	break;}
+						incn1("√˚◊÷=    #",0X01,"Œƒ∑® -> √˚◊÷ + ∑Ω∑®\n");
+						incn2("∑Ω∑®=    #",0X0A,"Œƒ∑® -> √˚◊÷ + ∑Ω∑®\n");
+						break;
+					case 0X10:
+						if(csug){inpc(F,O,C,_info_name);inpc(F,O,C,_info_type);	break;}
+						incn2("¿‡√˚=    #",0X01,"¿‡√˚ -> Œƒ±æ"); 
+						break;
+					case 0X12:
+						if(csug){inpc(F,O,C,_info_name);inpc(F,O,C,_info_type);	break;}
+						incn1("√˚◊÷=    #",0X01,"Œƒ∫Ø -> √˚◊÷ + ∫Ø ˝\n");
+						incn2("∫Ø ˝=    #",0X0C,"Œƒ∫Ø -> √˚◊÷ + ∫Ø ˝\n");
 						break;
 					default:
 						break;
 				}
 				fclose(C);
 				goto file_end;
-			}else if(conss&&key(VK_OEM_MINUS)){
+			}else if(conss>0&&key(VK_OEM_MINUS)){
  				char c;
-				if(cupos[conss]){	fprintf(O,"Ê≠£Âú®Áî®!");getchar();goto file_end;}
+				if(cupos[conss]){	fprintf(O,"’˝‘⁄”√!");getchar();goto file_end;}
 				if(chkc(conss,0X01)){
 					rewind(stdin);
-					fprintf(O,"Á°ÆÂÆö?[Y/N]");
+					fprintf(O,"»∑∂®?[Y/N]");
 					scanf("%c",&c);
 					if(c!='Y'&&c!='y')	goto file_end;
 				}
+				for(int i=conss+1;i<concnt-1;i++)
+					repc(cupos[i],i-1);
 				delc(conss);
-			}else if(conss&&key(VK_OEM_PLUS)){
-				system("cls");
-				fprintf(O,"1:ÊñáÊú¨\n2:NO/right_click\n3:Êï¥Êï∞\n4:Â∞èÊï∞\n5:ÈïøÊï∞\n6:ÈïøÂ∞è\n7:Á±ª\n8:Â≠óÁ¨¶‰∏≤\n9:Â≠óÊÆµ\nA:ÊñπÊ≥ï\nB:Êé•Âè£\nC:ÂáΩÊï∞\n‰∏ãÈù¢:NOOOOOOOOOOOOO!!!!!!!!!!");
+			}else if((conss>0||concnt<1)&&key(VK_OEM_PLUS)){
+				system("cls");if(concnt<1)	conss=0;
+				fprintf(O,"1:Œƒ±æ\n2:NO/right_click\n3:’˚ ˝\n4:–° ˝\n5:≥§ ˝\n6:≥§–°\n7:¿‡\n8:◊÷∑˚¥Æ\n9:◊÷∂Œ\nA:∑Ω∑®\nB:Ω”ø⁄\nC:∫Ø ˝\nœ¬√Ê:NOOOOOOOOOOOOO!!!!!!!!!!");
 				int k=0;
 				while(!key(VK_LBUTTON)){
 					if(key('2')||key(VK_RBUTTON)||key(VK_ESCAPE))	goto file_end;
@@ -788,50 +762,96 @@ int main(int argc,char **argv){
 	#define I_FLAG_myIDE
 		if(showno==_flagw&&key(VK_LBUTTON)){
 			int k=getmousey();
-			fsetpos(F,&(copos[concnt]));
 			FILE *C=fopen(inpnam,"rb+");
+			fsetpos(F,&(copos[concnt]));
 			fsetpos(C,&(copos[concnt]));
 			unsigned short temp=0;
-			read2(F,&temp);
-			if(k>=1&&k<=16)
-				temp^=65536>>k;
-			writ2(C,&temp);
-			read2(F,&temp);
-			if(k==17)
-			{fprintf(O,"\nthis=   #");	out2(O,temp);
-			fprintf(O,"->#");scanf("%x",&temp);}
+			read2(F,&temp);	if(k>=1&&k<=16)
+				temp^=65536>>k;	writ2(C,&temp);
+			read2(F,&temp);	if(k==17)
+			{if(csug){inpc(F,O,C,_class);goto file_end;}
+			fprintf(O,"\nŒ“:   #");	out2(O,temp);
+			fprintf(O,"->#");scanf("%x",&temp);
 			if(!chkc(temp,0X07)&&cchk)
-				{fprintf(O,"\nmust a class");	getchar();	getchar();	goto file_end;}
-			writ2(C,&temp);
-			read2(F,&temp);
-			if(k==18)
-			{fprintf(O,"\nsuper   #");	out2(O,temp);
-			fprintf(O,"->#");scanf("%x",&temp);}
-			writ2(C,&temp);
+				{fprintf(O,"\n≤ª «¿‡");
+				getchar();	getchar();	goto file_end;}
+			}	writ2(C,&temp);
+			read2(F,&temp);	if(k==18){
+			if(csug){inpc(F,O,C,_class);goto file_end;}
+			fprintf(O,"\nµ˘:   #");	out2(O,temp);
+			fprintf(O,"->#");scanf("%x",&temp);
 			if(!chkc(temp,0X07)&&cchk)
-				{fprintf(O,"\nmust a class,too");	getchar();	getchar();	goto file_end;}
-			fclose(C);
-			goto file_end;
+				{fprintf(O,"\n“≤≤ª «¿‡");
+				getchar();	getchar();	goto file_end;}
+			}	writ2(C,&temp);
+			fpos_t t=flen-2;
+			fsetpos(F,&(t));
+			fsetpos(C,&(t));
+			read2(F,&temp);	if(k==19)
+			{fprintf(O,"\n‘¥:   #");	out2(O,temp);
+			fprintf(O,"->#");scanf("%x",&temp);}
+			if(!chkc(temp,0X01)&&cchk)
+				{fprintf(O,"\n≤ª «Œƒº˛√˚");	getchar();	getchar();	goto file_end;
+			}writ2(C,&temp);
+			fclose(C);	goto file_end;
 		}
-	#define I_CONFIG_myIDE
 		if(showno==_confw){
 			if(key(VK_LBUTTON)){
 				int k=getmousey();
-				if(k==0)
+				if(k==_cchk)
 					cchk=!cchk;
-				if(k==1)
+				if(k==_csug)
 					csug=!csug;
-				if(k==2){	_tofile=true;
+				if(k==_tofi){	_tofile=true;
 					char s[256]="output.txt";
-//					scanf("%s",s);
-					E=fopen(s,"w");
+					scanf("%s",s);
+					E=fopen(s,"wb");
 				}
-				if(k==3){
+				if(k==_help){
 					system("cls");
-					printf("Èº†Ê†áÂ∑¶ÈîÆÈÄâÊã©\tÂè≥ÈîÆ‰∏çÈÄâ\n");
-					printf("ËæìÂÖ•Êï∞Â≠óÊó∂ÊâìÈóÆÂè∑ÂèØ‰ª•Ë∑≥Ëøá\n");
+					printf(" Û±Í◊Ûº¸—°‘Ò\t”“º¸≤ª—°\n");
+					printf(" ‰»Î ˝◊÷ ±¥ÚŒ ∫≈ø…“‘Ã¯π˝\n");
 					getchar();
 				}
+				if(k==_opfi){newf:
+					printf("¥Úø™Œƒº˛:");
+					scanf("%s",inpn);
+				}
+			}
+		}
+	#define I_INTF_myIDE
+		if(showno==_fielw){
+			if(fieli>=fieldcnt)	fieli=fieldcnt-1;
+			if(fieli<0)	fieli=0;
+				  if(fieli>0&&key(VK_UP))
+				fieli--;
+			 else if(methi<fieldcnt-1&&key(VK_DOWN))
+				fieli++;
+			 else if(key(VK_LBUTTON)){
+				int k=getmousey();
+				FILE *C=fopen(inpnam,"rb+");
+				fsetpos(F,&(fe[fieli].tpos[_fielp]));
+				fsetpos(C,&(fe[fieli].tpos[_fielp]));
+				unsigned short temp=0;
+				read2(F,&temp);	if(k>=1&&k<=16)
+					temp^=65536>>k;	writ2(C,&temp);
+				read2(F,&temp);	if(k==17){
+				if(csug){inpc(F,O,C,_method_name);goto file_end;}
+				fprintf(O,"\n√˚:   #");	out2(O,temp);
+				fprintf(O,"->#");scanf("%x",&temp);
+				if(!chkc(temp,0X01)&&cchk)
+					{fprintf(O,"\n≤ª «√˚◊÷");
+					getchar();	getchar();	goto file_end;}
+				}	writ2(C,&temp);
+				read2(F,&temp);	if(k==18){
+				if(csug){inpc(F,O,C,_method_type);goto file_end;}
+				fprintf(O,"\n¿‡:   #");	out2(O,temp);
+				fprintf(O,"->#");scanf("%x",&temp);
+				if(!chkc(temp,0X01)&&cchk)
+					{fprintf(O,"\n≤ª «√˚◊÷");
+					getchar();	getchar();	goto file_end;}
+			 	}	writ2(C,&temp);
+				fclose(C);
 			}
 		}
 	#define I_METHOD_myIDE
@@ -846,32 +866,32 @@ int main(int argc,char **argv){
 				fsetpos(F,&(m[methi].tpos[_methp]));
 				fsetpos(C,&(m[methi].tpos[_methp]));
 				unsigned short temp=0;
-				read2(F,&temp);
-				if(k>=1&&k<=16)
-					temp^=65536>>k;
-				writ2(C,&temp);
-				read2(F,&temp);
-				if(k==17)
-				{fprintf(O,"\nthis=   #");	out2(O,temp);
-				fprintf(O,"->#");scanf("%x",&temp);}
+				read2(F,&temp);	if(k>=1&&k<=16)
+					temp^=65536>>k;	writ2(C,&temp);
+				read2(F,&temp);	if(k==17){
+				if(csug){inpc(F,O,C,_method_name);goto file_end;}
+				fprintf(O,"\n√˚:   #");	out2(O,temp);
+				fprintf(O,"->#");scanf("%x",&temp);
 				if(!chkc(temp,0X01)&&cchk)
-					{fprintf(O,"\nmust a string");	getchar();	getchar();	goto file_end;}
-				writ2(C,&temp);
-				read2(F,&temp);
-				if(k==18)
-				{fprintf(O,"\nsuper   #");	out2(O,temp);
-				fprintf(O,"->#");scanf("%x",&temp);}
-				writ2(C,&temp);
+					{fprintf(O,"\n≤ª «√˚◊÷");
+					getchar();	getchar();	goto file_end;}
+				}	writ2(C,&temp);
+				read2(F,&temp);	if(k==18){
+				if(csug){inpc(F,O,C,_method_type);goto file_end;}
+				fprintf(O,"\n¿‡:   #");	out2(O,temp);
+				fprintf(O,"->#");scanf("%x",&temp);
 				if(!chkc(temp,0X01)&&cchk)
-					{fprintf(O,"\nmust a string,too");	getchar();	getchar();	goto file_end;}
+					{fprintf(O,"\n≤ª «¿‡–Õ");
+					getchar();	getchar();	goto file_end;}
+			 	}	writ2(C,&temp);
 				fclose(C);
 			}else if(key(VK_OEM_MINUS)){
 				fsetpos(F,&(m[methi].tpos[_methp]));
 				char s[256];read4(F,&temp4);
 				readconst(copos[temp4&0XFFFF],s);
 				if(cmp(s,"<init>"))
-				{system("cls");printf("‰∏çËÉΩÂà†initÂáΩÊï∞");goto file_end;} 
-				printf("Á°ÆÂÆö?[T/F]");
+				{system("cls");printf("≤ªƒ‹…æinit∫Ø ˝");goto file_end;} 
+				printf("»∑∂®?[T/F]");
 				if(getchar()=='T'){
 					FILE *C=fopen(inpnam,"rb+");
 					fsetpos(F,&(copos[concnt+3]));
@@ -886,25 +906,12 @@ int main(int argc,char **argv){
 				}
 			}else if(key(VK_OEM_PLUS)){
 				unsigned char s[256]={
-				0X00,0X00,0X00,0X00,0X00,0X00,
-				0X00,0X01,0XFF,0XFF,0X00,0X00,
-				0X00,0X0C,0X00,0X00,0X00,0X00,
-				0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00};
-				int ti=0;char c[256];
-				for(int i=1;i<concnt;i++)
-					if(chkc(i,1)){
-						readconst(copos[i],c);
-						if(cmp(c,"Code"))
-						{ti=i;break;}
-					}
-				if(ti==0){
-					ti=concnt;
-					char c[256]="  Code";
-					c[0]=1;	c[1]=4;
-					finst(inpnam,copos[ti],c,6);
-				}
-				s[8]=ti&0XFF00;
-				s[9]=ti&0X00FF;
+				0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X01,
+				0XFF,0XFF,0X00,0X00,0X00,0X0C,0X00,0X00,
+				0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,
+				0X00,0X00};
+				int ti=fndc("Code");
+				s[8]=ti&0XFF00;	s[9]=ti&0X00FF;
 				FILE *C=fopen(inpnam,"rb+");
 				fsetpos(F,&(copos[concnt+3]));
 				fsetpos(C,&(copos[concnt+3]));
@@ -919,29 +926,14 @@ int main(int argc,char **argv){
 		}
 	#define I_CODE_myIDE
 		if(showno==_codew){
-				  if(key(VK_RBUTTON)
-			||key(VK_ESCAPE)
-			||getmousey()<=0&&key(VK_LBUTTON))
-				m[methi].codes=-1;//noselect
-			 else if(m[methi].codei>0
-			&&m[methi].codes<0
-			&&key(VK_UP))//scroll_up
-				m[methi].codei--;
-			 else if(m[methi].codei<m[methi].cocnt[_codep]
-			&&m[methi].codes<0
-			&&key(VK_DOWN))//scroll_dn
-				m[methi].codei++;
-			 else if(m[methi].codes!=getmousey()+m[methi].codei-1
-			&&getmousey()+m[methi].codei<=m[methi].cocnt[_codep]
-			&&getmousey()>0
-			&&key(VK_LBUTTON))//select_mouse
-				m[methi].codes=getmousey()+m[methi].codei-1;
-			 else if(m[methi].codes!=m[methi].codei
-			&&key(VK_RETURN))//select_key
-				m[methi].codes=m[methi].codei;
+				 if(m[methi].codei<0)
+				m[methi].codei=0;
+				 if(m[methi].codei>m[methi].cocnt[_codep])
+				m[methi].codei=m[methi].cocnt[_codep];
+			stdlop(m[methi].codes,m[methi].codei,m[methi].cocnt[_codep],_codew);
 			fpos_t tpos=m[methi].codes;
 				  if(m[methi].codes>=0
-			&&m[methi].codes<m[methi].cocnt[_codep]
+			&&m[methi].codes>0
 			&&key(VK_UP)){//go_up
 				fswap(inpnam,m[methi].prpos[tpos-1]
 							,m[methi].prpos[tpos]
@@ -949,7 +941,7 @@ int main(int argc,char **argv){
 				if(m[methi].codei>0)	m[methi].codei--;
 				m[methi].codes--;
 			}else if(m[methi].codes>=0
-			&&m[methi].codes<m[methi].cocnt[_codep]
+			&&m[methi].codes<m[methi].cocnt[_codep]-1
 			&&key(VK_DOWN)){//go_dn
 				fswap(inpnam,m[methi].prpos[tpos]
 							,m[methi].prpos[tpos+1]
@@ -970,6 +962,8 @@ int main(int argc,char **argv){
 				tn=0;		read4(F,&tn);
 				tn-=dt;		writ4(C,&tn);
 				fclose(C);
+				for(int i=m[methi].codes+1;i<m[methi].cocnt[_codep];i++)
+					repc(m[methi].pupos[i],i-1);
 				fdelt(inpnam,tnam,m[methi].prpos[tpos],m[methi].prpos[tpos+1]);
 			}else if((m[methi].codes>=0
 			&&m[methi].codes==getmousey()+m[methi].codei-1
@@ -985,18 +979,17 @@ int main(int argc,char **argv){
 				printf("%d\n",codln[c[0]]);
 				for(int i=1;i<codln[c[0]];i++){
 					fscanf(F,"%c",c+i);
-					out(O,c[i]);
-				}printf("\n");
+					out1(O,c[i]);
+				}fprintf(O,"\n");
 				unsigned char s[256];
 				scanf("%s",s);
-				for(int i=1,j=1;s[i]&&j<codln[c[0]];i++){
+				for(int i=0,j=1;s[i]&&j<codln[c[0]];i++){
 						  if(c2x(s[i])>=0&&c2x(s[i+1])>=0){
-						c[i]=c2x(s[i])*16+c2x(s[i+1]);
+						c[j]=c2x(s[i])*16+c2x(s[i+1]);
 						i++;j++;
-						printf("OK");
 					}else if(s[i]=='*')
 						j++;
-					 else{printf("‰∏çÁêÜËß£%c",s[i]);
+					 else{printf("≤ª¿ÌΩ‚%c",s[i]);
 						key(VK_RETURN);
 						while(!key(VK_RETURN));}
 				}
@@ -1008,15 +1001,25 @@ int main(int argc,char **argv){
 		}
 	#define I_EXMP_myIDE
 		if(showno==_exmpw){
-//			printf("OK");
-				  if(key(VK_UP)&&m[methi].exmpi>0)
+				  if(m[methi].exmpi>0&&key(VK_UP))
 				m[methi].exmpi--;
-			 else if(key(VK_DOWN)&&m[methi].exmpi<codln.size())
+			 else if(m[methi].exmpi<codln.size()&&key(VK_DOWN))
 				m[methi].exmpi++;
-			 else if(key(VK_LBUTTON)){
-				int i=m[methi].exmpi+getmousey();
+			 else if(getmousey()>0&&getmousey()<getheight()-1&&key(VK_LBUTTON)){
+				int i=m[methi].exmpi+getmousey()-1;
 				if(i<203){
-					char s[8];s[0]=i;
+					char s[8]={};s[0]=i;
+					long long t=m[methi].prpos[m[methi].cocnt[_codep]];
+					if(m[methi].codes!=-1)
+						t=m[methi].prpos[m[methi].codes];
+					for(int i=m[methi].codes;i<m[methi].cocnt[_codep];i++)
+						repc(m[methi].pupos[i],i+1);
+					if(t<=0)	goto file_end;
+					printf("\t%x\t",t);return 0;
+//					printf(" %+016llX %+016llX ",m[methi].codes,t);
+					finst(inpnam,t,s,codln[i]);
+					if(m[methi].codes!=-1)	m[methi].codes++;
+//					printf("%d",copos[0X1F00]);getchar();
 					FILE *C=fopen(inpnam,"rb+");
 					fsetpos(F,&(m[methi].tpos[_codep]));
 					fsetpos(C,&(m[methi].tpos[_codep]));
@@ -1027,17 +1030,11 @@ int main(int argc,char **argv){
 					fsetpos(F,&cpos);
 					fsetpos(C,&cpos);
 					tn=0;		read4(F,&tn);
-					tn+=dt;		writ4(C,&tn);
+					tn+=dt+0;	writ4(C,&tn);
 					fclose(C);
-					long long t=0;t=m[methi].prpos[m[methi].cocnt[_codep]];
-					if(m[methi].codes!=-1)
-						t=m[methi].prpos[m[methi].codes];
-					out8(stdout,t);
-					printf(" %+016llX %+016llX ",m[methi].codes,t);getchar();
-					finst(inpnam,t,s,codln[i]);
-					m[methi].codes++;
 				}
-			}
+			}else if(getmousey()==0&&key(VK_LBUTTON))
+				scanf("%X",&(m[methi].exmpi));
 		}
 		if(showno==_trysw){
 				  if(key(VK_RBUTTON)
@@ -1111,16 +1108,16 @@ int main(int argc,char **argv){
 				fsetpos(C,&tpos);
 				int tn;
 				rewind(stdin);
-				fprintf(O,"‰ªé  ={\n");		tn=show2(F,O);
+				fprintf(O,"¥”  ={\n");		tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"Âà∞  ={\n");		tn=show2(F,O);
+				fprintf(O,"µΩ  ={\n");		tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"Â§ÑÁêÜ={\n");	tn=show2(F,O);
+				fprintf(O,"¥¶¿Ì={\n");	tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"Á±ªÂà´:\n");	tn=show2(F,O);
+				fprintf(O,"¿‡±:\n");	tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
@@ -1129,35 +1126,16 @@ int main(int argc,char **argv){
 	#define I_ATRI_myIDE
 		if(showno==_linsw){
 			if(m[methi].tpos[_linsp]>=0){
-				  if(key(VK_RBUTTON)
-			||key(VK_ESCAPE)
-			||getmousey()<=0&&key(VK_LBUTTON)
-			||m[methi].cocnt[_linsp]<=0
-			||m[methi].linss>=m[methi].cocnt[_linsp])
-				m[methi].linss=-1;//noselect
-			 else if(m[methi].linsi>0
-			&&m[methi].linss<0
-			&&key(VK_UP))//scroll_up
-				m[methi].linsi--;
-			 else if(m[methi].linsi<m[methi].cocnt[_linsp]
-			&&m[methi].linss<0
-			&&key(VK_DOWN))//scroll_dn
-				m[methi].linsi++;
-			 else if(m[methi].linss!=getmousey()+m[methi].linsi-1
-			&&key(VK_LBUTTON))//select_mouse
-				m[methi].linss=getmousey()+m[methi].linsi-1;
-			 else if(m[methi].linss!=m[methi].linsi
-			&&key(VK_RETURN))//select_key
-				m[methi].linss=m[methi].linsi;
+			stdlop(m[methi].linss,m[methi].linsi,m[methi].cocnt[_linsp],_linsw);
 			fpos_t tpos=m[methi].linss*4+m[methi].tpos[_linsp]+6;
-				  if(m[methi].linss>=0
+				  if(m[methi].linss>0
 			&&m[methi].linss<m[methi].cocnt[_linsp]
 			&&key(VK_UP)){//go_up
 				fswap(inpnam,tpos-4,tpos,tpos+4);
 				if(m[methi].linsi>0)	m[methi].linsi--;
 				m[methi].linss--;
 			}else if(m[methi].linss>=0
-			&&m[methi].linss<m[methi].cocnt[_linsp]
+			&&m[methi].linss<m[methi].cocnt[_linsp]-1
 			&&key(VK_DOWN)){//go_dn
 				fswap(inpnam,tpos,tpos+4,tpos+8);
 				if(m[methi].linsi<m[methi].cocnt[_linsp])	m[methi].linsi++;
@@ -1209,10 +1187,10 @@ int main(int argc,char **argv){
 				fsetpos(C,&tpos);
 				int tn;
 				rewind(stdin);
-				tn=show2(F,O);	fprintf(O,"Ë°å");
+				tn=show2(F,O);	fprintf(O,"––");
 				fprintf(O,"->{");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				tn=show2(F,O);	fprintf(O,"Ë°å");
+				tn=show2(F,O);	fprintf(O,"––");
 				fprintf(O,"->{");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
@@ -1277,36 +1255,16 @@ int main(int argc,char **argv){
 		}
 	//lines/varib
 		if(showno==_variw){
-			if(m[methi].tpos[_varip]>=0){
-				  if(key(VK_RBUTTON)
-			||key(VK_ESCAPE)
-			||getmousey()<=0&&key(VK_LBUTTON)
-			||m[methi].cocnt[_varip]<=0
-			||m[methi].varis>=m[methi].cocnt[_varip])
-				m[methi].varis=-1;//noselect
-			 else if(m[methi].varii>0
-			&&m[methi].varis<0
-			&&key(VK_UP))//scroll_up
-				m[methi].varii--;
-			 else if(m[methi].varii<m[methi].cocnt[_varip]
-			&&m[methi].varis<0
-			&&key(VK_DOWN))//scroll_dn
-				m[methi].varii++;
-			 else if(m[methi].varis!=getmousey()+m[methi].varii-1
-			&&key(VK_LBUTTON))//select_mouse
-				m[methi].varis=getmousey()+m[methi].varii-1;
-			 else if(m[methi].varis!=m[methi].varii
-			&&key(VK_RETURN))//select_key
-				m[methi].varis=m[methi].varii;
+			stdlop(m[methi].varis,m[methi].varii,m[methi].cocnt[_varip],_codew);
 			fpos_t tpos=m[methi].varis*10+m[methi].tpos[_varip]+6;
-				  if(m[methi].varis>=0
+				  if(m[methi].varis>0
 			&&m[methi].varis<m[methi].cocnt[_varip]
 			&&key(VK_UP)){//go_up
 				fswap(inpnam,tpos-10,tpos,tpos+10);
 				if(m[methi].varii>0)	m[methi].varii--;
 				m[methi].varis--;
 			}else if(m[methi].varis>=0
-			&&m[methi].varis<m[methi].cocnt[_varip]
+			&&m[methi].varis<m[methi].cocnt[_varip]-1
 			&&key(VK_DOWN)){//go_dn
 				fswap(inpnam,tpos,tpos+10,tpos+20);
 				if(m[methi].varii<m[methi].cocnt[_varip])	m[methi].varii++;
@@ -1335,6 +1293,8 @@ int main(int argc,char **argv){
 				tn=0;		read2(F,&tn);
 				tn++;		writ2(C,&tn);
 				fclose(C);
+				for(int i=m[methi].varis;i<m[methi].cocnt[_varip];i++)
+					repc(m[methi].vupos[i],i+1);
 				finst(inpnam,tpos,s,10);
 			}else if(m[methi].cocnt[_varip]>0
 			&&key(VK_OEM_MINUS)){//del
@@ -1355,6 +1315,8 @@ int main(int argc,char **argv){
 				tn=0;		read2(F,&tn);
 				tn--;		writ2(C,&tn);
 				fclose(C);
+				for(int i=m[methi].varis+1;i<m[methi].cocnt[_varip];i++)
+					repc(m[methi].vupos[i],i-1);
 				fdelt(inpnam,tnam,tpos,tpos+10);
 			}else if((m[methi].varis>=0
 			&&m[methi].varis==getmousey()+m[methi].varii-1
@@ -1367,20 +1329,19 @@ int main(int argc,char **argv){
 				fsetpos(C,&tpos);
 				int tn;
 				rewind(stdin);
-				fprintf(O,"\nÂÆö‰πâ‰ΩçÁΩÆ");	tn=show2(F,O);
+				fprintf(O,"\n∂®“ÂŒª÷√");	tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"\tÂèØÁî®ÈïøÂ∫¶");	tn=show2(F,O);
+				fprintf(O,"ø…”√≥§∂»");	tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"\tÂêçÂ≠ó=#");		tn=show2(F,O);
+				fprintf(O,"√˚◊÷=#");		tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				rewind(stdin);
-				fprintf(O,"\tÁ±ªÂûã=#");		tn=show2(F,O);
+				fprintf(O,"¿‡–Õ=#");		tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
-			}
 			}	if(key(VK_DELETE)&&key(VK_BACK)&&m[methi].cocnt[_varip]>=0
 			||m[methi].cocnt[_varip]==0&&key(VK_OEM_MINUS)){
 				fpos_t mi=m[methi].cocnt[_trysp]*8+m[methi].tpos[_trysp]+2;
@@ -1394,12 +1355,9 @@ int main(int argc,char **argv){
 				fsetpos(C,&mi);
 				tn=0;		read2(F,&tn);
 				tn--;		writ2(C,&tn);
-				printf("%d",tn);
-				
-				fclose(C);
+				printf("%d",tn);	fclose(C);
 				fdelt(inpnam,tnam,m[methi].tpos[_varip]-2,m[methi].tpos[_varip]+l);
 				m[methi].tpos[_varip]=-1;
-//				}
 			}else if(key(VK_OEM_PLUS)&&m[methi].tpos[_varip]<=0){
 				fpos_t mi=m[methi].cocnt[_trysp]*8+m[methi].tpos[_trysp]+2;
 				fpos_t l=0;
@@ -1441,12 +1399,12 @@ int main(int argc,char **argv){
 		}
 #define FILE_END_myIDE
 		file_end:
-		fclose(F);
-		fclose(W);
+		key(VK_RETURN);
+		fclose(F);	fclose(W);
 		FILE *Z=fopen(inpnam,"r");
 		if(Z->_file>3){system("cls");
 		printf("file%d",Z->_file);
-		return 0;}fclose(Z);
+		return 0;	}fclose(Z);
 	}
 	}//endwhile
 }
