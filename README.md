@@ -1,7 +1,6 @@
 # myjavaIDE
-A java bytecode IDE that run on bugs 基于bug的java字节码IDE
-
-(myIDE) (下文叫做myIDE)
+This program is a java bytecode IDE that run on bugs(myIDE)
+这个程序是基于bug的java字节码IDE(下文叫做myIDE)
 
 MyIDE can't run without dev-c++ myIDE离了C++跑不了
 
@@ -13,18 +12,17 @@ MyIDE have not already been developed yet myIDE没做完
 
 MyIDE may break and delete files,please backup  myIDE可能损坏或删除文件,请备份
 
-
 So don't use myIDE to do things may cause serious influence
 
 所以别用myIDE来做可能导致重大影响的事
 
-or things conntcted to right or property
+or things connected to right or property
 
 或联系到权利或财产的事
 
-Anyone use myIDE should read this README.md
+Any user should read this README.md
 
-任何用户都必须读这篇免责声明
+任何用户必须读这篇README
 
 All in all,DON'T USE myIDE IF NOT NECESSARY
 
