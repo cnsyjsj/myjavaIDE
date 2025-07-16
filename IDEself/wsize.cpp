@@ -67,7 +67,7 @@ bool issel(HWND hwnd){
 }
 void chkconf(){
 	RECT rect;GetWindowRect(hwnd,&rect);
-	printf("A\nA\nA\nA\nA\nA\nAAAAAAA");
+	printf("O\nA\nA\nA\nA\nA\nAAAAAAX");
 	POINT p;	while(!key(VK_LBUTTON))	GetCursorPos(&p);
 	printf("%d",TITL_H=p.y-rect.top);
 	POINT p1;	while(!key(VK_LBUTTON))	GetCursorPos(&p1);
