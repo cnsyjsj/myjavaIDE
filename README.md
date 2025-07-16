@@ -34,3 +34,9 @@ Base on cmd,please change TITL_H,CHAR_H,CHAR_W in wsize.cpp
 when using new fonts(refer to chkconf())
 基于控制台运行,在换字体时改wsize.cpp的TITL_H,CHAR_H,CHAR_W以适配
 (依据chkconf())
+
+Way to use chkconf():put in main(),run,click O,then ckick X
+chkconf用法:放main()里,运行,先点O,后点X
+
+Output:TITL_H\nCHAR_H CHAR_W,±1
+输出:TITL_H回车CHAR_H char_W,有误差
