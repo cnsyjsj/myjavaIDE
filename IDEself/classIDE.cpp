@@ -104,7 +104,14 @@ unsigned short outv(FILE *F,FILE *O,int type,map<int,posln*> &h){
 	return a;
 }
 #define outc(F,O,t) (outv(F,O,t,cupos))
-void printconst(FILE *F,FILE *O,int i,int m=1){
+void printconst(FILE *F,FILE *O,us i,int m=1){
+	if(m==2){
+		for(int i=1;i<concnt;i++){
+			printf("\n%+04X",i);
+			printconst(F,O,i,1);
+		}
+		rewind(stdin);	getchar();	return;
+	}
 	fpos_t C;	fgetpos(F,&C);
 	fsetpos(F,&(copos[i]));
 	char c;fscanf(F,"%c",&c);
@@ -206,7 +213,7 @@ void printconst(FILE *F,FILE *O,int i,int m=1){
 }
 void inpc(FILE *F,FILE *O,FILE *C,int type){
 	system("cls");
-	int conti=0;unsigned short c=0;
+	int conti=0;us c=0;
 	if(type!=_short_class)	read2(F,&c);
 	else	fscanf(F,"%c",&c);
 	printconst(F,O,c,1);
@@ -282,10 +289,7 @@ int main(int argc,char **argv){
 //	if(F==0){printf("打开文件");
 //	scanf("%s",inpn);}
 //	fclose(F);
-	while(1){
-	if(key(VK_LEFT)&&showno>0)	showno--;
-	if(key(VK_RIGHT)&&showno<_endw)	showno++;
-	if(issel(hwnd)){
+	while(1)	if(issel(hwnd)){
 		file_start:
 		system("cls");
 		delall();
@@ -412,15 +416,12 @@ int main(int argc,char **argv){
 				rewind(W);
 				fprintf(O,"\n");
 				FILE *T=fopen("bytecode.txt","rb");
-				if(T->_file>10)	printf("398!!!");
+				if(T->_file>5)	printf("398!!!");
 				if(T==0){printf("T@398");return 0;}
 				O=W;
 				m[i].cocnt[_codep]=0;
 				for(int j=0;j<len;){
-//					O=(showno==_codew&&methi==i&&j>=m[i].codei&&j<m[i].codei+getheight()-2)?stdout:W;
 					if(_tofile)	O=E;
-//					if(j==m[i].codes)	printf("[");
-//					if(j==m[i].codei+getmousey()-1)printf("-");
 					fgetpos(F,&(m[i].prpos[m[i].cocnt[_codep]]));
 					int ct=unsign(show1(F,O));
 					fpos_t tpos=(ct)*11;	fsetpos(T,&tpos);
@@ -452,7 +453,6 @@ int main(int argc,char **argv){
 						printf("%c",c);
 					}
 				}fclose(T);
-//				printf(" %d ",m[i].cocnt[_codep]);
 				freopen("waste.txt","wb",W);
 				O=(showno==_codew&&methi==i)?stdout:W;
 				fprintf(O,"%+08X/%+08X",m[i].codei,m[i].cocnt[_codep]);
@@ -510,16 +510,14 @@ int main(int argc,char **argv){
 						}
 						fprintf(O,"\n%X",getmousey()+m[i].varii-1);
 					}
-//					else{
-////						O=(showno==_methw&&methi==i)?stdout:W;
-//						O=stdout;
-//						printf("\n:%d???%X %s\n",j,typ,s);
-//						fpos_t tpos;
-//						fgetpos(F,&tpos);
-//						printf("@%llX:\n",tpos);
-////						show(F,show4(F,stderr));
-////						return 0;
-//					}
+					else{
+						O=stderr;
+						printf("\n:%d %d??? %s\n",i,j,s);
+						fpos_t tpos;
+						fgetpos(F,&tpos);
+						printf("@%llX:\n",tpos);
+//						return 0;
+					}
 				}
 			}//else return 0;
 //			else{	printf("\n:%d??%X %s\n",i,typ,s);fpos_t tpos;
@@ -768,21 +766,21 @@ int main(int argc,char **argv){
 			unsigned short temp=0;
 			read2(F,&temp);	if(k>=1&&k<=16)
 				temp^=65536>>k;	writ2(C,&temp);
-			read2(F,&temp);	if(k==17)
-			{if(csug){inpc(F,O,C,_class);goto file_end;}
+			read2(F,&temp);	if(k==17){
+			if(csug){fofst(F,-2);inpc(F,O,C,_class);fclose(C);goto file_end;}
 			fprintf(O,"\n我:   #");	out2(O,temp);
 			fprintf(O,"->#");scanf("%x",&temp);
 			if(!chkc(temp,0X07)&&cchk)
 				{fprintf(O,"\n不是类");
-				getchar();	getchar();	goto file_end;}
+				getchar();	getchar();	fclose(C);	goto file_end;}
 			}	writ2(C,&temp);
 			read2(F,&temp);	if(k==18){
-			if(csug){inpc(F,O,C,_class);goto file_end;}
+			if(csug){fofst(F,-2);inpc(F,O,C,_class);fclose(C);goto file_end;}
 			fprintf(O,"\n爹:   #");	out2(O,temp);
 			fprintf(O,"->#");scanf("%x",&temp);
 			if(!chkc(temp,0X07)&&cchk)
 				{fprintf(O,"\n也不是类");
-				getchar();	getchar();	goto file_end;}
+				getchar();	getchar();	fclose(C);	goto file_end;}
 			}	writ2(C,&temp);
 			fpos_t t=flen-2;
 			fsetpos(F,&(t));
@@ -790,11 +788,15 @@ int main(int argc,char **argv){
 			read2(F,&temp);	if(k==19)
 			{fprintf(O,"\n源:   #");	out2(O,temp);
 			fprintf(O,"->#");scanf("%x",&temp);}
-			if(!chkc(temp,0X01)&&cchk)
-				{fprintf(O,"\n不是文件名");	getchar();	getchar();	goto file_end;
-			}writ2(C,&temp);
+			if(!chkc(temp,0X01)&&cchk){
+				fprintf(O,"\n不是文件名");
+				getchar();	getchar();	fclose(C);	goto file_end;
+			}	writ2(C,&temp);
 			fclose(C);	goto file_end;
 		}
+		if(key('C'))	printconst(F,O,0,2);
+		if(key(VK_LEFT)&&showno>0)	showno--;
+		if(key(VK_RIGHT)&&showno<_endw)	showno++;
 		if(showno==_confw){
 			if(key(VK_LBUTTON)){
 				int k=getmousey();
@@ -811,6 +813,9 @@ int main(int argc,char **argv){
 					system("cls");
 					printf("鼠标左键选择\t右键不选\n");
 					printf("输入数字时打问号可以跳过\n");
+					printf("常量界面双击可展开并修改常量\n");
+					printf("代码界面不能展开常量,但是C键打常量表\n");
+					printf("其他界面单击展开修改\n");
 					getchar();
 				}
 				if(k==_opfi){newf:
@@ -836,20 +841,20 @@ int main(int argc,char **argv){
 				read2(F,&temp);	if(k>=1&&k<=16)
 					temp^=65536>>k;	writ2(C,&temp);
 				read2(F,&temp);	if(k==17){
-				if(csug){inpc(F,O,C,_method_name);goto file_end;}
+				if(csug){fofst(F,-2);inpc(F,O,C,_method_name);fclose(C);goto file_end;}
 				fprintf(O,"\n名:   #");	out2(O,temp);
 				fprintf(O,"->#");scanf("%x",&temp);
-				if(!chkc(temp,0X01)&&cchk)
-					{fprintf(O,"\n不是名字");
-					getchar();	getchar();	goto file_end;}
+				if(!chkc(temp,0X01)&&cchk){
+					fprintf(O,"\n不是名字");
+					getchar();	getchar();	fclose(C);		goto file_end;}
 				}	writ2(C,&temp);
 				read2(F,&temp);	if(k==18){
-				if(csug){inpc(F,O,C,_method_type);goto file_end;}
+				if(csug){fofst(F,-2);inpc(F,O,C,_method_type);fclose(C);goto file_end;}
 				fprintf(O,"\n类:   #");	out2(O,temp);
 				fprintf(O,"->#");scanf("%x",&temp);
-				if(!chkc(temp,0X01)&&cchk)
-					{fprintf(O,"\n不是名字");
-					getchar();	getchar();	goto file_end;}
+				if(!chkc(temp,0X01)&&cchk){
+					fprintf(O,"\n不是名字");
+					getchar();	getchar();	fclose(C);		goto file_end;}
 			 	}	writ2(C,&temp);
 				fclose(C);
 			}
@@ -869,20 +874,20 @@ int main(int argc,char **argv){
 				read2(F,&temp);	if(k>=1&&k<=16)
 					temp^=65536>>k;	writ2(C,&temp);
 				read2(F,&temp);	if(k==17){
-				if(csug){inpc(F,O,C,_method_name);goto file_end;}
+				if(csug){fofst(F,-2);inpc(F,O,C,_method_name);fclose(C);goto file_end;}
 				fprintf(O,"\n名:   #");	out2(O,temp);
 				fprintf(O,"->#");scanf("%x",&temp);
 				if(!chkc(temp,0X01)&&cchk)
 					{fprintf(O,"\n不是名字");
-					getchar();	getchar();	goto file_end;}
+					getchar();	getchar();	fclose(C);		goto file_end;}
 				}	writ2(C,&temp);
 				read2(F,&temp);	if(k==18){
-				if(csug){inpc(F,O,C,_method_type);goto file_end;}
+				if(csug){fofst(F,-2);inpc(F,O,C,_method_type);fclose(C);goto file_end;}
 				fprintf(O,"\n类:   #");	out2(O,temp);
 				fprintf(O,"->#");scanf("%x",&temp);
 				if(!chkc(temp,0X01)&&cchk)
 					{fprintf(O,"\n不是类型");
-					getchar();	getchar();	goto file_end;}
+					getchar();	getchar();	fclose(C);		goto file_end;}
 			 	}	writ2(C,&temp);
 				fclose(C);
 			}else if(key(VK_OEM_MINUS)){
@@ -890,7 +895,7 @@ int main(int argc,char **argv){
 				char s[256];read4(F,&temp4);
 				readconst(copos[temp4&0XFFFF],s);
 				if(cmp(s,"<init>"))
-				{system("cls");printf("不能删init函数");goto file_end;} 
+				{system("cls");printf("不能删init函数");	goto file_end;} 
 				printf("确定?[T/F]");
 				if(getchar()=='T'){
 					FILE *C=fopen(inpnam,"rb+");
@@ -1037,26 +1042,7 @@ int main(int argc,char **argv){
 				scanf("%X",&(m[methi].exmpi));
 		}
 		if(showno==_trysw){
-				  if(key(VK_RBUTTON)
-			||key(VK_ESCAPE)
-			||getmousey()<=0&&key(VK_LBUTTON))
-				m[methi].tryss=-1;//noselect
-			 else if(m[methi].trysi>0
-			&&m[methi].tryss<0
-			&&key(VK_UP))//scroll_up
-				m[methi].trysi--;
-			 else if(m[methi].trysi<m[methi].cocnt[_trysp]
-			&&m[methi].tryss<0
-			&&key(VK_DOWN))//scroll_dn
-				m[methi].trysi++;
-			 else if(m[methi].tryss!=getmousey()+m[methi].trysi-1
-			&&getmousey()+m[methi].trysi<=m[methi].cocnt[_trysp]
-			&&getmousey()>0
-			&&key(VK_LBUTTON))//select_mouse
-				m[methi].tryss=getmousey()+m[methi].trysi-1;
-			 else if(m[methi].tryss!=m[methi].trysi
-			&&key(VK_RETURN))//select_key
-				m[methi].tryss=m[methi].trysi;
+			stdlop(m[methi].tryss,m[methi].trysi,m[methi].cocnt[_trysp],_trysw);
 			fpos_t tpos=m[methi].tryss*8+m[methi].tpos[_trysp]+2;
 				  if(m[methi].tryss>=0
 			&&m[methi].tryss<m[methi].cocnt[_trysp]
@@ -1113,12 +1099,12 @@ int main(int argc,char **argv){
 				rewind(stdin);
 				fprintf(O,"到  ={\n");		tn=show2(F,O);
 				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
-				rewind(stdin);
-				fprintf(O,"处理={\n");	tn=show2(F,O);
-				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
-				rewind(stdin);
-				fprintf(O,"类别:\n");	tn=show2(F,O);
-				fprintf(O,"->");	scanf("%X",&tn);	writ2(C,&tn);
+				rewind(stdin);	fprintf(O,"处理={");	tn=show2(F,O);
+				fprintf(O,"\n");	printconst(F,O,tn);
+				fprintf(O,"\n->");	scanf("%X",&tn);	writ2(C,&tn);
+				rewind(stdin);	fprintf(O,"类别:");	tn=show2(F,O);
+				fprintf(O,"\n");	printconst(F,O,tn);
+				fprintf(O,"\n->");	scanf("%X",&tn);	writ2(C,&tn);
 				fclose(C);
 				key(VK_RETURN);
 			}
@@ -1328,20 +1314,17 @@ int main(int argc,char **argv){
 				fsetpos(F,&tpos);
 				fsetpos(C,&tpos);
 				int tn;
-				rewind(stdin);
-				fprintf(O,"\n定义位置");	tn=show2(F,O);
+				rewind(stdin);	fprintf(O,"\n定义位置");tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
-				rewind(stdin);
-				fprintf(O,"可用长度");	tn=show2(F,O);
+				rewind(stdin);	fprintf(O,"可用长度");	tn=show2(F,O);
 				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
-				rewind(stdin);
-				fprintf(O,"名字=#");		tn=show2(F,O);
-				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
-				rewind(stdin);
-				fprintf(O,"类型=#");		tn=show2(F,O);
-				fprintf(O,"->#");	scanf("%X",&tn);	writ2(C,&tn);
-				fclose(C);
-				key(VK_RETURN);
+				rewind(stdin);	fprintf(O,"名字=#");	tn=show2(F,O);
+				fprintf(O,"\n");	printconst(F,O,tn);
+				fprintf(O,"\n->#");	scanf("%X",&tn);	writ2(C,&tn);
+				rewind(stdin);	fprintf(O,"类型=#");	tn=show2(F,O);
+				fprintf(O,"\n");	printconst(F,O,tn);
+				fprintf(O,"\n->#");	scanf("%X",&tn);	writ2(C,&tn);
+				fclose(C);	key(VK_RETURN);
 			}	if(key(VK_DELETE)&&key(VK_BACK)&&m[methi].cocnt[_varip]>=0
 			||m[methi].cocnt[_varip]==0&&key(VK_OEM_MINUS)){
 				fpos_t mi=m[methi].cocnt[_trysp]*8+m[methi].tpos[_trysp]+2;
@@ -1389,8 +1372,7 @@ int main(int argc,char **argv){
 				tn++;		writ2(C,&tn);
 				fclose(C);
 				char s[16]={
-				0X0F,0X0F,0X00,0X00,
-				0X00,0X02,0X00,0X00};
+				0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X00};
 				s[0]=ti&0XFF00;
 				s[1]=ti&0X00FF;
 				finst(inpnam,l,s,8);
@@ -1406,5 +1388,4 @@ int main(int argc,char **argv){
 		printf("file%d",Z->_file);
 		return 0;	}fclose(Z);
 	}
-	}//endwhile
 }
