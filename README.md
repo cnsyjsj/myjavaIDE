@@ -11,11 +11,13 @@ myIDE不能用于做关于钱的事
 MyIDE can't be used to do things may cause
 serious influence or connected to right or property
 myIDE不能用于做可能导致重大影响或联系到权利或财产的事
+
 (neither directly nor indirectly)
 (无论直接间接)
 
 All users should read this README.md
 任何用户必须读这篇README
+
 MyIDE have not already been developed yet
 myIDE没做完
 
