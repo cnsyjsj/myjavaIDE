@@ -1,6 +1,5 @@
 #include<stdio.h>
-//for java class
-//#define bufsize 256
+#include<windows.h>
 typedef unsigned long long ull;
 typedef unsigned int ui;
 typedef unsigned short us;
@@ -14,19 +13,21 @@ void read1(FILE *F,void *x){	fscanf(F,"%c",(char*)x);	}
 void writ1(FILE *F,void *x){	fprintf(F,"%c",*((char*)x));}
 void read2(FILE *F,void *x){	fscanf(F,"%c",(char*)x+1);		fscanf(F,"%c",(char*)x);	}
 void writ2(FILE *F,void *x){	fprintf(F,"%c",*((char*)x+1));	fprintf(F,"%c",*((char*)x));}
-void read4(FILE *F,void *f){	char *c=(char*)f;	fscanf(F,"%c",c+3);	fscanf(F,"%c",c+2);	fscanf(F,"%c",c+1);	fscanf(F,"%c",c);	}
-void writ4(FILE *F,void *f){	char *c=(char*)f;	fprintf(F,"%c",*(c+3));	fprintf(F,"%c",*(c+2));	fprintf(F,"%c",*(c+1));	fprintf(F,"%c",*c);	}
-void read8(FILE *F,void *p){	read4(F,p);	read4(F,(char*)p+4);}
-void writ8(FILE *F,void *p){	writ4(F,p);	writ4(F,(char*)p+4);}
+void read4(FILE *F,void *x){	char *c=(char*)x;	fscanf(F,"%c",c+3);	fscanf(F,"%c",c+2);	fscanf(F,"%c",c+1);	fscanf(F,"%c",c);	}
+void writ4(FILE *F,void *x){	char *c=(char*)x;	fprintf(F,"%c",*(c+3));	fprintf(F,"%c",*(c+2));	fprintf(F,"%c",*(c+1));	fprintf(F,"%c",*c);	}
+void read8(FILE *F,void *x){	read4(F,x);	read4(F,(char*)x+4);}
+void writ8(FILE *F,void *x){	writ4(F,x);	writ4(F,(char*)x+4);}
 uc	 show1(FILE *F,FILE *O){	uc c;	fscanf(F,"%c",&c);	out1(O,c);	return c;	}
 us	 show2(FILE *F,FILE *O){	us c;	read2(F,&c);		out2(O,c);	return c;	}
 ui	 show4(FILE *F,FILE *O){unsigned c;	read4(F,&c);		out4(O,c);	return c;}
 bool cmp(const char a[],const char b[]){	for(int i=0;b[i];i++)	if(a[i]!=b[i])	return false;	return true;	}
 void mktab(FILE *O,int tab){fprintf(O,"\n");for(int i=0;i<tab;i++){fprintf(O,"\t");}}
 void detab(FILE *F,int tab){char c;	for(int i=0;i<=tab;i++)	{fscanf(F,"%c",&c);}}
-void show(FILE *F,int tab){char c;	for(int i=0;i<=tab;i++)	{fscanf(F,"%c",&c);printf("%c",c);}}
-void openflagsR(FILE *F,FILE*O)
-{
+void show(FILE *F,int tab) {char c;	for(int i=0;i<=tab;i++)	{fscanf(F,"%c",&c);printf("%c",c);}}
+FILE *freset(FILE*F,FILE*C){	long long p;	fgetpos(F,&p);	fsetpos(C,&p);	fclose(F);	return C;}
+void fofst(FILE *F,int i)  {	fpos_t T;fgetpos(F,&T);	T+=i;fsetpos(F,&T);}
+void forctop(){int *p=0;p++;*p=1;}
+void openflagsR(FILE *F,FILE*O){
 	char buf[2];	fscanf(F,"%c%c",buf+0,buf+1);//		ACC_
 	fprintf(O,"\n模块=   %d",(buf[0]&0X80)!=0);//MOUDLE
 	fprintf(O,"\n枚举抽象%d",(buf[0]&0X40)!=0);//ENUM 
@@ -45,8 +46,7 @@ void openflagsR(FILE *F,FILE*O)
 	fprintf(O,"\nPRIVATE=%d",(buf[1]&0X02)!=0);
 	fprintf(O,"\nPUBLIC= %d",(buf[1]&0X01)!=0);
 }
-void openflagsW(FILE *F,FILE*O,int tab)
-{
+void openflagsW(FILE *F,FILE*O,int tab){
 	int c=0,t;
 	detab(F,tab);	fscanf(F,"模块=   %d",&t);c+=t*0x8000;
 	detab(F,tab);	fscanf(F,"枚举抽象%d",&t);c+=t*0x4000;
@@ -81,31 +81,29 @@ void fswap(const char *__file,long long a,long long b,long long c){
 	for(int i=0;i<b-a;i++)	fprintf(O,"%c",s[i]);
 	fclose(O);
 }
-void finst(const char *__file,long long a,const char *s,long long len){
+void finst(const char *__file,long long a,const char*s,long long len){
 	char buf;
-	fpos_t b;
-	FILE *F=fopen(__file,"rb+");
-	FILE *O=fopen(__file,"rb+");
-	if(F==0)	printf("F");
-	fsetpos(F,&a);
-	fsetpos(O,&a);
-	fgetpos(F,&b);
-//	if(a==b){printf("finst%llX %llX",a,b);getchar();}
-	for(int i=0;i<len;i++)
-		fprintf(O,"%c",s[i]);
-	while(fscanf(F,"%c",&buf)>0)
-		fprintf(O,"%c",buf);
-	fclose(F);
-	fclose(O);
+	FILE *F=fopen(__file,"rb+"),*O=fopen(__file,"rb+");
+	if(F==0)		printf("F");
+	fsetpos(F,&a);	fsetpos(O,&a);
+	for(int i=0;i<len;i++){					fprintf(O,"%c",s[i]);
+	if(i%0X100==0XFF)	O=freset(O,fopen(__file,"rb+"));
+}	for(int i=0;fscanf(F,"%c",&buf)>0;i++){	fprintf(O,"%c",buf);
+	if(i%0X100==0XFF)	O=freset(O,fopen(__file,"rb+"));
+}	fclose(F);		fclose(O);
 }
-void fdelt(const char *__file,const char *tmpf,long long a,long long b){
-	FILE *F=fopen(__file,"rb");
-	FILE *O=fopen(tmpf,"wb");
-	char c;
-	while(fscanf(F,"%c",&c)>=0)	fprintf(O,"%c",c);
-	freopen(__file,"wb",F);
-	freopen(tmpf,"rb",O);
-	for(int i=0;fscanf(O,"%c",&c)>=0;i++)	if(i<a||i>=b)fprintf(F,"%c",c);
-	fclose(F);
-	fclose(O);
+void fdelt(const char *__file,const char *__tmpf,long long a,long long b){
+	FILE *F=fopen(__file,"rb"),*O=fopen(__tmpf,"wb");	char c;
+	for(long long i=0;fscanf(F,"%c",&c)>=0;i++){fprintf(O,"%c",c);
+	if(i%0X100==0XFF)	O=freset(O,fopen(__tmpf,"rb+"));
+}	freopen(__file,"wb",F);	freopen(__tmpf,"rb",O);
+	for(long long i=0;fscanf(O,"%c",&c)>=0;i++){if(i<a||i>=b)	fprintf(F,"%c",c);
+	if(i%0X100==0XFF)	F=freset(F,fopen(__file,"rb+"));
+}	fclose(F);	fclose(O);
+}
+ui tonum(char *c){
+	return	((c[0]<'A')?(c[0]-'0'):((c[0]<'a')?(c[0]-'A'+10):(c[0]-'a'+10)))*16*16*16+
+			((c[1]<'A')?(c[1]-'0'):((c[1]<'a')?(c[1]-'A'+10):(c[1]-'a'+10)))*16*16+
+			((c[2]<'A')?(c[2]-'0'):((c[2]<'a')?(c[2]-'A'+10):(c[2]-'a'+10)))*16+
+			((c[3]<'A')?(c[3]-'0'):((c[3]<'a')?(c[3]-'A'+10):(c[3]-'a'+10)));
 }

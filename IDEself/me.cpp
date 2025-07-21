@@ -2,6 +2,7 @@
 #include"windows.h"
 #include"iostream"
 enum cc_sgn{
+	_allc,
 	_class_name,
 	_string_text,
 	_class,
@@ -13,6 +14,9 @@ enum cc_sgn{
 	_method,
 	_method_name,
 	_method_type,
+	_field,
+	_field_name,
+	_field_type,
 	_atri_type
 };
 enum sh_num{
@@ -27,15 +31,26 @@ enum sh_num{
 	_trysw,
 	_linsw,
 	_variw,
-	_endw
+	_endw,
+	_ICW
 };
-enum po_num{
+enum cl_num{
+	_const_pool,
+	_interfaces,
+	_fields,
+	_methods,
+	_fileatri,
+	_filend
+};
+enum me_num{
 	_methp,
 	_codep,
 	_trysp,
 	_linsp,
 	_varip,
-	_endmp=7
+	_vartp,
+	_signp,
+	_endmp=31
 };
 enum fi_num{
 	_fielp,
@@ -44,7 +59,6 @@ enum fi_num{
 enum config{
 	_cchk,
 	_csug,
-	_tofi,
 	_help,
 	_opfi
 };
@@ -58,21 +72,22 @@ char c2x(char c){
 //int _CPOS=0,_LPOS=0,_VPOS=0;
 void copy(char *a,const char *b){
 for(int i=0;b[i];i++)a[i]=b[i];}
-#define dbgf do{FILE *N=fopen("bytecode.txt","rb");if(N->_file>100)	printf("XXX!!!");printf("!%d",N->_file);fclose(N);}while(0);
 void stdlop(int &s,int &i,int &c,int m){
+	if(i>c-(m==0))	i=c-(m==0);if(i<0)	i=0;
+	if(s>c-(m==0))	s=c-(m==0);
 	if(key(VK_RBUTTON)||key(VK_ESCAPE))
 		s=-1;
-	 else if(i>0&&s<=0&&key(VK_UP))
+	 else if(i>0&&s<0+(m==_consw)&&key(VK_UP))
 		i--;
-	 else if(i<c&&s<=0&&key(VK_DOWN))
+	 else if(i<c&&s<0+(m==_consw)&&key(VK_DOWN))
 		i++;
-	 else if(s!=getmousey()+i&&
-	getmousey()+i<=c-(m==_consw?1:0)&&
+	 else if(s!=getmousey()+i-(m!=_consw)&&
+	getmousey()+i<=c-(m==_consw)&&
 	getmousey()>0&&
 	getmousey()<getheight()-1&&key(VK_LBUTTON))
-		s=getmousey()+i-(m!=_consw?1:0);
+		s=getmousey()+i-(m!=_consw);
 	 else if(getmousey()==0&&key(VK_LBUTTON))
 	 	{system("cls");scanf("%X",&i);}
-	 else if(s!=i+(m==_consw?1:0)&&key(VK_RETURN))
-		s=i+(m==_consw?1:0);
+	 else if(s!=i+(m==_consw)&&key(VK_RETURN))
+		s=i+(m==_consw);
 }
