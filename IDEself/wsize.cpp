@@ -8,16 +8,10 @@ struct __gmyhwnd__arg{
 	HWND hwnd;
 	DWORD pid;
 };
-int __stdcall __gmyhwnd__Enum(HWND hwnd, LPARAM lParam)
-{
-	__gmyhwnd__arg *arg = (__gmyhwnd__arg*)lParam;
-	DWORD pid = 0;
+int __stdcall __gmyhwnd__Enum(HWND hwnd, LPARAM lParam){
+	__gmyhwnd__arg *arg=(__gmyhwnd__arg*)lParam;	DWORD pid=0;
 	GetWindowThreadProcessId(hwnd, &pid);
-	if (pid == arg->pid){
-		arg->hwnd = hwnd;
-		return 0;
-	}
-	return 1;
+	if (pid == arg->pid){	arg->hwnd = hwnd;	return 0;}	return 1;
 }
 HWND gmyhwnd(){
 	__gmyhwnd__arg ewa;
@@ -45,18 +39,13 @@ int getmousey(HWND hwnd){
 	POINT p;GetCursorPos(&p);
 	return (p.y-rect.top-TITL_H)/CHAR_H;
 }
-int getheight(){return	getheight(hwnd);}
-int getweight(){return	getweight(hwnd);}
-int getmousex(){return	getmousex(hwnd);}
-int getmousey(){return	getmousey(hwnd);}
+inline int getheight(){return	getheight(hwnd);}
+inline int getweight(){return	getweight(hwnd);}
+inline int getmousex(){return	getmousex(hwnd);}
+inline int getmousey(){return	getmousey(hwnd);}
 #define keydn(x) (GetAsyncKeyState(x)&0X8000)
 bool key(int x){
-	if(keydn(x))
-	{
-		while(keydn(x));
-		return	true;
-	}
-	return false;
+	if(keydn(x)){	while(keydn(x));	return 1;	}	return 0;
 }
 bool issel(HWND hwnd){
 	POINT p;GetCursorPos(&p);
