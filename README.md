@@ -1,35 +1,29 @@
 # myjavaIDE
-This program is a java bytecode IDE based on bugs(myIDE)
-这个程序是基于bug的java字节码IDE(下文叫做myIDE)
+# policy
+This program is a java bytecode IDE(myIDE)
+这个程序是java字节码IDE(下文叫做myIDE)
 
-MyIDE can't be used to do illgeal things
-myIDE不能用于违法行为
+Any usage are seen as agreement to this policy 
+任何使用视为对此协议的同意
 
-MyIDE can't be used to do things connected to money
-myIDE不能用于做关于钱的事
+Any users shouldn't use myIDE to do illgeal things or that may connected to right or property
+myIDE不能用于违法行为或可能联系到权利或财产的事
 
-MyIDE can't be used to do things may cause
-serious influence or connected to right or property
-myIDE不能用于做可能导致重大影响或联系到权利或财产的事
-
-(neither directly nor indirectly)
-(无论直接间接)
-
-All users should read this README.md
-任何用户必须读这篇README
-
-MyIDE have not already been developed yet
+MyIDE have not already been developed yet.
 myIDE没做完
 
-MyIDE may break and delete files,please backup
+MyIDE may break or delete files,please backup them.
 myIDE可能损坏或删除文件,请备份
 
-myIDE may damage our computers,use virtual machine
-myIDE可能损坏电脑,请用虚拟机
+Any fault belong to the user,not the developer
+在myIDE的使用中,用户全责,开发者无责
 
-# use
-Main file is myIDE.cpp
-主文件myIDE.cpp
+# usage
+All the files are in the folder IDEself
+所有文件在IDEself文件夹下
+
+The main file is classIDE.cpp
+主文件classIDE.cpp
 
 Only run on dev-cpp(can't run directly)
 只能用devcpp运行(指不能直接运行)
