@@ -9,7 +9,7 @@ using namespace std;
 char inpnam[256]="new.class",typnam[256]="class";
 #define tnam "waste.txt"
 //#define lockname "copy C:\\Users\\86139\\Desktop\\projects\\myIDE\\test\\out\\production\\test\\test.class input.class"
-#define lockname "copy prog prog.class"
+#define lockname "copy EXAMPLE\\prog prog.class"
 //#define lockname "copy ..\\mods\\test\\net\\mcreator\\test\\TestMod.class input.class"
 //#define lockname "copy ..\\mods\\test\\net\\mcreator\\test\\item\\SpawnerhandleItem.class input.class"
 struct posln{
@@ -66,11 +66,9 @@ void repc(posln *a,us b){
 void addc(int x,int k){
 	for(int i=x;i<fcnt[_const_pool];i++)
 		repc(cupos[i],i+1);
-	r:FILE *C=fopen(inpnam,"rb+");
-	if(C==0){fprintf(stderr,"addc");getchar();goto r;}
-	copos[0]=copos[1]-2;	fsetpos(C,&(copos[0]));
-	fcnt[_const_pool]++;	writ2(C,&fcnt[_const_pool]);
-	fclose(C);
+	copos[0]=copos[1]-2;
+	fcnt[_const_pool]++;
+	pa2(inpnam,copos[0],1);
 	char s[16]={};	s[0]=k+1;
 	char n[256]={2,0,4,4,8,8,2,2,4,4,4,4,0,0,3,2,0,3};
 	finst(inpnam,copos[fss[_const_pool]],s,n[k]+1);
@@ -78,13 +76,9 @@ void addc(int x,int k){
 void delc(int x){
 	for(int i=x+1;i<fcnt[_const_pool];i++)
 		repc(cupos[i],i-1);
-	r:FILE *C=fopen(inpnam,"rb+");
-	if(C==0){fprintf(stderr,"delc");getchar();goto r;}
 	copos[0]=copos[1]-2;
-	fsetpos(C,&(copos[0]));
 	fcnt[_const_pool]--;
-	writ2(C,&fcnt[_const_pool]);
-	fclose(C);
+	pa2(inpnam,copos[0],-1);
 	fdelt(inpnam,tnam,copos[fss[_const_pool]],copos[fss[_const_pool]+1]);
 }
 unsigned short outv(FILE *F,FILE *O,int type,map<int,posln*> &h){
@@ -985,14 +979,10 @@ int main(int argc,char **argv){
 						int i=0;for(;s[i];i++);out2(C,(i+1)/2);
 						for(int i=0;s[i];i+=2)
 						out1(C,h2c(s[i])*16+h2c(s[i+1]));
-						fclose(C);	if(i==0){	C=fopen(inpnam,"rb+");
+						fclose(C);	if(i==0){
 						fdelt(inpnam,tnam,m[fis[_methods]].tpos[_smttp]-2,
 						m[fis[_methods]].tpos[_smttp]+2+m[fis[_methods]].cnt[_smttp]);
-						fsetpos(F,&m[fis[_methods]].tpos[_methp]);	fofst(F,6);
-						fsetpos(C,&m[fis[_methods]].tpos[_methp]);	fofst(C,6);
-						tn=0;		read2(F,&tn);
-						tn--;		writ2(C,&tn);
-						fclose(C);}
+						pa2(inpnam,m[fis[_methods]].tpos[_methp]+6,-1);}
 						}	break;
 					case 6:
 						if(m[fis[_methods]].tpos[_signp]>0){
@@ -1001,13 +991,9 @@ int main(int argc,char **argv){
 						fsetpos(C,&m[fis[_methods]].tpos[_signp]);	fofst(C,4);
 						if(csug){tn=inpc(F,O,C,_string_text);}
 						else	{incn2("签名=    #",0X01,"签名 -> 文本\n");	}
-						fclose(C);	if(tn==0){	C=fopen(inpnam,"rb+");
+						fclose(C);	if(tn==0){
 						fdelt(inpnam,tnam,m[fis[_methods]].tpos[_signp]-2,m[fis[_methods]].tpos[_signp]+6);
-						fsetpos(F,&m[fis[_methods]].tpos[_methp]);	fofst(F,6);
-						fsetpos(C,&m[fis[_methods]].tpos[_methp]);	fofst(C,6);
-						tn=0;		read2(F,&tn);
-						tn--;		writ2(C,&tn);
-						fclose(C);}
+						pa2(inpnam,m[fis[_methods]].tpos[_methp]+6,-1);}
 						}	break;
 				}
 			}
@@ -1034,14 +1020,9 @@ int main(int argc,char **argv){
 				m[fis[_methods]].ss[_codew]++;
 			}else if(m[fis[_methods]].cnt[_codep]>0
 			&&key(VK_OEM_MINUS)){//del
-				FILE *C=fopen(inpnam,"rb+");
 				int dt=m[fis[_methods]].prpos[tpos+1]-m[fis[_methods]].prpos[tpos];
 				fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
-				fsetpos(F,&cpos);
-				fsetpos(C,&cpos);
-				tn=0;		read4(F,&tn);
-				tn-=dt;		writ4(C,&tn);
-				fclose(C);
+				pa2(inpnam,cpos,-dt);
 				for(int i=m[fis[_methods]].ss[_codew]+1;i<m[fis[_methods]].cnt[_codep];i++)
 					repc(m[fis[_methods]].pupos[i],i-1);
 				fdelt(inpnam,tnam,m[fis[_methods]].prpos[tpos],m[fis[_methods]].prpos[tpos+1]);
@@ -1094,11 +1075,7 @@ int main(int argc,char **argv){
 					FILE *C=fopen(inpnam,"rb+");
 					int dt=codln[i];
 					fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
-					fsetpos(F,&cpos);
-					fsetpos(C,&cpos);
-					int tn=0;	read4(F,&tn);
-					tn+=dt;		writ4(C,&tn);
-					fclose(C);
+					pa2(inpnam,cpos,dt);
 				}
 			}else if(getmousey()==0&&key(VK_LBUTTON))
 				scanf("%X",&(m[fis[_methods]].is[_exmpw]));
@@ -1122,21 +1099,11 @@ int main(int argc,char **argv){
 			}else if(m[fis[_methods]].ss[_trysw]>=0
 			&&key(VK_OEM_PLUS)){//add
 				char s[8]={};
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_trysp]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_trysp]));
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
-				fclose(C);
+				pa2(inpnam,m[fis[_methods]].tpos[_trysp]+4,1);
 				finst(inpnam,tpos,s,8);
 			}else if(m[fis[_methods]].ss[_trysw]>=0
 			&&key(VK_OEM_MINUS)){//del
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_trysp]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_trysp]));
-				tn=0;		read2(F,&tn);
-				tn--;		writ2(C,&tn);
-				fclose(C);
+				pa2(inpnam,m[fis[_methods]].tpos[_trysp]+4,-1);
 				fdelt(inpnam,tnam,tpos,tpos+8);
 			}else if((m[fis[_methods]].ss[_trysw]>=0
 			&&m[fis[_methods]].ss[_trysw]==getmousey()+m[fis[_methods]].is[_trysw]-1
@@ -1181,34 +1148,16 @@ int main(int argc,char **argv){
 				fswap(inpnam,tpos,tpos+4,tpos+8);
 				if(m[fis[_methods]].is[_linsw]<m[fis[_methods]].cnt[_linsp])	m[fis[_methods]].is[_linsw]++;
 				m[fis[_methods]].ss[_linsw]++;
-			}else if(
-			key(VK_OEM_PLUS)){//add
+			}else if(m[fis[_methods]].cnt[_linsp]>=0
+			&&key(VK_OEM_PLUS)){//add
 				char s[4]={};
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_linsp]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_linsp]));
-				tn=0;		read4(F,&tn);
-				tn+=4;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
-				fclose(C);
+				pa2(inpnam,m[fis[_methods]].tpos[_linsp]+4,1);
 				finst(inpnam,tpos,s,4);
 				if(m[fis[_methods]].is[_linsw]<m[fis[_methods]].cnt[_linsp])	m[fis[_methods]].is[_linsw]++;
 			}else if(m[fis[_methods]].cnt[_linsp]>0
 			&&key(VK_OEM_MINUS)
 			){//del
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn-=4;		writ4(C,&tn);
-				fsetpos(F,&(m[fis[_methods]].tpos[_linsp]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_linsp]));
-				tn=0;		read4(F,&tn);
-				tn-=4;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn--;		writ2(C,&tn);
-				fclose(C);
+				pa2(inpnam,m[fis[_methods]].tpos[_linsp]+4,-1);
 				fdelt(inpnam,tnam,tpos,tpos+4);
 				if(m[fis[_methods]].is[_linsw]>0)	m[fis[_methods]].is[_linsw]--;
 			}else if((m[fis[_methods]].ss[_linsw]>=0
@@ -1235,14 +1184,7 @@ int main(int argc,char **argv){
 				fpos_t mi=m[fis[_methods]].cnt[_trysp]*8+m[fis[_methods]].tpos[_trysp]+2;
 				fpos_t l=m[fis[_methods]].cnt[_linsp]*4+6;
 				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn-=l;		writ4(C,&tn);
-				fsetpos(F,&mi);
-				fsetpos(C,&mi);
-				tn=0;		read2(F,&tn);
-				tn--;		writ2(C,&tn);
+				pa2(inpnam,mi,-1);
 				fclose(C);
 				fdelt(inpnam,tnam,m[fis[_methods]].tpos[_linsp]-2,m[fis[_methods]].tpos[_linsp]+l);
 				m[fis[_methods]].tpos[_linsp]=-1;
@@ -1251,14 +1193,7 @@ int main(int argc,char **argv){
 				fpos_t l=m[fis[_methods]].tpos[_endmp];
 				char c[65536];	int ti=fndc("LineNumberTable");
 				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn+=6;		writ4(C,&tn);
-				fsetpos(F,&mi);
-				fsetpos(C,&mi);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
+				pa2(inpnam,mi,1);
 				fclose(C);
 				char s[16]={
 				0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X00};
@@ -1285,48 +1220,20 @@ int main(int argc,char **argv){
 				fswap(inpnam,tpos,tpos+10,tpos+20);
 				if(m[fis[_methods]].is[_variw]<m[fis[_methods]].cnt[_varip])	m[fis[_methods]].is[_variw]++;
 				m[fis[_methods]].ss[_variw]++;
-			}else if(m[fis[_methods]].tpos[_varip]>0&&
+			}else if(m[fis[_methods]].tpos[_varip]>=0&&
 			key(VK_OEM_PLUS)){//add
 				char s[10]={};
 				s[8]=ss&0XFF00;
 				s[9]=ss&0x00FF;
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn+=10;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);		writ2(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
-				fsetpos(F,&(m[fis[_methods]].tpos[_varip]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_varip]));
-				tn=0;		read4(F,&tn);
-				tn+=10;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
-				fclose(C);
+				pa2(inpnam,m[fis[_methods]].tpos[_varip]+4,1);
 				for(int i=ss;i<m[fis[_methods]].cnt[_varip];i++)
 					repc(m[fis[_methods]].vupos[i],i+1);
-				out8(stdout,tpos);return 0;
+				out8(stdout,tpos);//return 0;
 				finst(inpnam,tpos,s,10);
 				if(m[fis[_methods]].is[_variw]<m[fis[_methods]].cnt[_varip])	m[fis[_methods]].is[_variw]++;
 			}else if(m[fis[_methods]].cnt[_varip]>0
 			&&key(VK_OEM_MINUS)){//del
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn-=10;		writ4(C,&tn);
-				tn=0;read2(F,&tn);writ2(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
-				fsetpos(F,&(m[fis[_methods]].tpos[_varip]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_varip]));
-				tn=0;		read4(F,&tn);
-				tn-=10;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn--;		writ2(C,&tn);
-				fclose(C);
+				pa2(inpnam,m[fis[_methods]].tpos[_varip]+4,-1);
 				for(int i=ss+1;i<m[fis[_methods]].cnt[_varip];i++)
 					repc(m[fis[_methods]].vupos[i],i-1);
 				fdelt(inpnam,tnam,tpos,tpos+10);
@@ -1364,10 +1271,6 @@ int main(int argc,char **argv){
 				fpos_t mi=m[fis[_methods]].cnt[_trysp]*8+m[fis[_methods]].tpos[_trysp]+2;
 				fpos_t l=m[fis[_methods]].cnt[_varip]*10+6;
 				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn-=l;		writ4(C,&tn);
 				pa2(inpnam,mi,-1);
 				printf("%d",tn);	fclose(C);
 				fdelt(inpnam,tnam,m[fis[_methods]].tpos[_varip]-2,m[fis[_methods]].tpos[_varip]+l);
@@ -1380,14 +1283,7 @@ int main(int argc,char **argv){
 					{l=m[fis[_methods]].tpos[i]-2;break;}
 				char c[65536];	int ti=fndc("LocalVariableTable");
 				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(m[fis[_methods]].tpos[_codep]));
-				fsetpos(C,&(m[fis[_methods]].tpos[_codep]));
-				int tn=0;	read4(F,&tn);
-				tn+=6;		writ4(C,&tn);
-				fsetpos(F,&mi);
-				fsetpos(C,&mi);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
+				pa2(inpnam,mi,1);
 				fclose(C);
 				char s[16]={
 				0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X00};
@@ -1561,87 +1457,6 @@ int main(int argc,char **argv){
 				dbf=true;
 			}
 		}
-		/*/if(showno==_inclw&&zab){
-			fpos_t tpos=max(fss[_inclp],fis[_inclp])*8+copos[fcnt[_const_pool]+_inclp]+6;
-				  if(fis[_inclp]>0&&key(VK_UP))
-				fis[_inclp]--;
-			 else if(fis[_inclp]<fcnt[_inclp]-1&&key(VK_DOWN))
-			 	fis[_inclp]++;
-				  if(!zab&&key(VK_LBUTTON)){
-				int k=getmousey();
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&copos[fcnt[_const_pool]+_inclp]);	fofst(F,6+8*fis[_inclp]);
-				fsetpos(C,&copos[fcnt[_const_pool]+_inclp]);	fofst(C,6+8*fis[_inclp]);
-				read2(F,&temp);	if(k==1){
-				if(csug){fofst(F,-2);inpc(F,O,C,_method);fclose(C);goto file_end;}
-				fprintf(O,"\n内:   #");	out2(O,temp);
-				fprintf(O,"->#");scanf("%x",&temp);
-				if(!chkc(temp,0X07)&&cchk)
-					{fprintf(O,"\n不是类");
-					getchar();	getchar();	fclose(C);		goto file_end;}
-				}	writ2(C,&temp);
-				read2(F,&temp);	if(k==2){
-				if(csug){fofst(F,-2);inpc(F,O,C,_method);fclose(C);goto file_end;}
-				fprintf(O,"\n外:   #");	out2(O,temp);
-				fprintf(O,"->#");scanf("%x",&temp);
-				if(!chkc(temp,0X07)&&cchk)
-					{fprintf(O,"\n不是类");
-					getchar();	getchar();	fclose(C);		goto file_end;}
-				}	writ2(C,&temp);
-				read2(F,&temp);	if(k==3){
-				if(csug){fofst(F,-2);inpc(F,O,C,_method_name);fclose(C);goto file_end;}
-				fprintf(O,"\n名:   #");	out2(O,temp);
-				fprintf(O,"->#");scanf("%x",&temp);
-				if(!chkc(temp,0X01)&&cchk)
-					{fprintf(O,"\n不是名");
-					getchar();	getchar();	fclose(C);		goto file_end;}
-				}	writ2(C,&temp);
-				read2(F,&temp);	if(k>=4&&k<=19)
-				temp^=65536>>k-3;	writ2(C,&temp);
-			}else if(key(VK_OEM_PLUS)){//add
-				char s[10]={};
-				if(fss[_inclp]<0){
-					tpos=copos[fcnt[_const_pool]+_inclp]+6;
-					s[8]=0;s[9]=0;}
-				else{
-				s[8]=fss[_inclp]&0XFF00;
-				s[9]=fss[_inclp]&0x00FF;}
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(copos[fcnt[_const_pool]+_inclp]));
-				fsetpos(C,&(copos[fcnt[_const_pool]+_inclp]));
-				tn=0;		read4(F,&tn);
-				tn+=8;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn++;		writ2(C,&tn);
-				fclose(C);
-				finst(inpnam,tpos,s,8);
-			}else if(fcnt[_inclp]>0
-			&&key(VK_OEM_MINUS)){//del
-				if(fss[_inclp]<0)
-					tpos=copos[fcnt[_const_pool]+_inclp]+6;
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&(copos[fcnt[_const_pool]+_inclp]));
-				fsetpos(C,&(copos[fcnt[_const_pool]+_inclp]));
-				tn=0;		read4(F,&tn);
-				tn-=8;		writ4(C,&tn);
-				tn=0;		read2(F,&tn);
-				tn--;		writ2(C,&tn);
-				fclose(C);
-				fdelt(inpnam,tnam,tpos,tpos+8);
-			}else if(fcnt[_inclp]>=0&&keydn(VK_DELETE)&&key(VK_BACK)
-			||fcnt[_inclp]==0&&key(VK_OEM_MINUS)){
-				fpos_t l=fcnt[_inclp]*8+6;
-				FILE *C=fopen(inpnam,"rb+");
-				fsetpos(F,&copos[fcnt[_const_pool]+_file_atri]);
-				fsetpos(C,&copos[fcnt[_const_pool]+_file_atri]);
-				tn=0;		read2(F,&tn);
-				tn--;		writ2(C,&tn);
-				fclose(C);
-				fdelt(inpnam,tnam,copos[fcnt[_const_pool]+_inclp]-2,copos[fcnt[_const_pool]+_inclp]+l);
-				copos[fcnt[_const_pool]+_inclp]=-1;
-			}
-		}/**/
-		
 #define FEND_myIDE
 		file_end:
 		key(VK_RETURN);
