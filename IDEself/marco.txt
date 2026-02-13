@@ -1,0 +1,9 @@
++00000007 00000003 println
+B2#09 07 01 0010"java/lang/System" 0C 01 0003"out" 01 0015"Ljava/io/Printstream"
+12
+B6#0A 07 01 0013"java/io/Printstream" 0C 01 0007"println",01 0015"(Ljava/lang/String;)V"
++00000005 00000003 init
+2A
+B7#01 0000""
+B1
+-

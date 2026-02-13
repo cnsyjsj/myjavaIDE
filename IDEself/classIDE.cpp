@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include"lib.cpp"
 #include"me.cpp"
+#include<cstring>
 #include<map>
 using namespace std;
 char inpnam[256]="new.class",typnam[256]="class";
@@ -38,11 +39,16 @@ struct bsm{
 	int 		c,is,ss;
 	map <int,fpos_t>pos;
 } bsms[65536];
-map<int,int> codln;
+map<int,int>codln;
+map<int,int>marln;
+map<int,ll> marcp;
+map<int,ll> marhp;
+map<int,char[256]> marnm;
+map<int,int> marhs;
 map<int,char[256]> codnm;
 int fis[32]={},fss[32]={},fcnt[32]={};
 us tn;		bool cchk=1,csug=1;
-int showno=_flagw,tmpw;bool dbf=0,zab=0;//config
+int showno=_flagw,tmpw;bool dbf=0,zab=0,bf=0;//config
 void readconst(fpos_t pos,char *buf){
 	r:FILE *T=fopen(inpnam,"rb+");
 	if(T==0){
@@ -64,20 +70,17 @@ void repc(posln *a,us b){
 	}	fclose(F);
 }
 void addc(int x,int k){
-	for(int i=x;i<fcnt[_const_pool];i++)
-		repc(cupos[i],i+1);
-	copos[0]=copos[1]-2;
-	fcnt[_const_pool]++;
-	pa2(inpnam,copos[0],1);
-	char s[16]={};	s[0]=k+1;
-	char n[256]={2,0,4,4,8,8,2,2,4,4,4,4,0,0,3,2,0,3};
-	finst(inpnam,copos[fss[_const_pool]],s,n[k]+1);
+	for(int i=x;i<fcnt[_const_pool];i++)	repc(cupos[i],i+1);
+	copos[0]=copos[1]-2;	fcnt[_const_pool]++;
+	pa2(inpnam,copos[0],1);	char s[16]={};	s[0]=k;
+	char n[256]={0,2,0,4,4,8,8,2,2,4,4,4,4,0,0,3,2,0,3};
+	finst(inpnam,copos[x],s,n[k]+1);
+	for(int i=65534;i>=fcnt[_const_pool]-1;i--)
+	copos[i+1]=copos[i]!=0?(copos[i]+n[k]+1):0;
 }
 void delc(int x){
-	for(int i=x+1;i<fcnt[_const_pool];i++)
-		repc(cupos[i],i-1);
-	copos[0]=copos[1]-2;
-	fcnt[_const_pool]--;
+	for(int i=x+1;i<fcnt[_const_pool];i++)	repc(cupos[i],i-1);
+	copos[0]=copos[1]-2;	fcnt[_const_pool]--;
 	pa2(inpnam,copos[0],-1);
 	fdelt(inpnam,tnam,copos[fss[_const_pool]],copos[fss[_const_pool]+1]);
 }
@@ -94,7 +97,7 @@ unsigned short outv(FILE *F,FILE *O,int type,map<int,posln*> &h){
 void printconst(FILE *F,FILE *O,us i,int m=1){
 	if(m==2){	for(int i=1;i<fcnt[_const_pool];i++)
 		{printf("\n%+04X",i);	printconst(F,O,i,1);}
-		rewind(stdin);	getchar();	return;}
+		rewind(stdin);	return;}
 	if(i==0)	return;
 	fpos_t C;	fgetpos(F,&C);	fsetpos(F,&(copos[i]));
 	char c;fscanf(F,"%c",&c);
@@ -205,7 +208,7 @@ us inpc(FILE *F,FILE *O,FILE *C,int type){
 bool chkc(int p,uc t){
 	r:FILE *T=fopen(inpnam,"rb+");
 	if(T==0){fprintf(stderr,"chkc");getchar();goto r;}
-	fsetpos(T,&(copos[p]));//bug
+	fsetpos(T,&(copos[p]));
 	uc c=0;	fscanf(T,"%c",&c);
 	fclose(T);	return c==t||p==0;
 }
@@ -213,20 +216,116 @@ void chkl(FILE *F,ui l,int t,int i){
 		if(cchk&&fofst(F,0)-m[i].tpos[t]-4!=l)
 		pr4(inpnam,m[i].tpos[t],fofst(F,0)-m[i].tpos[t]-4);
 }
-us fndc(const char c[256]){
-	int ti=0;char b[256];
+int pi=0;
+bool matchconst1(int n,char s[65536],int m=0){
+	if((m&1)==0&&chkc(n,1)){	char b[65536];
+	readconst(copos[n],b);	return cmp(b,s+pi);}
+	us c;sscanf(s+pi,"%X",&c);pi+=3;
+	if(!chkc(n,c))	return 0;
+//	printf("\n%XOK%X %s=\n",n,c,s+pi);
+	FILE *C=fopen(inpnam,"rb");
+	fsetpos(C,&copos[n]);fofst(C,1);
+	switch(c){
+		case 0X01:
+		sscanf(s+pi,"%X\"",&c);pi+=5;
+		char a[65536],b[65536];
+		readconst(copos[n],a);
+		for(int i=0;i<c;i++)
+		{b[i]=s[i+pi];b[i+1]=0;}pi+=c+2;
+//		printf("s: %s %s %d\n",a,b,cmp(a,b));
+		return cmp(a,b);
+		case 0X03:	int ia,ib;
+		sscanf(s+pi,"%d",&ia);pi+=numlen(s+pi);
+		read4(C,&ib);	return ia==ib;
+		case 0X04:	float fa,fb;
+		sscanf(s+pi,"%f",&fa);pi+=numlen(s+pi);
+		read4(C,&fb);	return fa==fb;
+		case 0X05:	ll la,lb;
+		sscanf(s+pi,"%lld",&la);pi+=numlen(s+pi);
+		read8(C,&lb);	return la==lb;
+		case 0X06:	double da,db;
+		sscanf(s+pi,"%lf",&da);pi+=numlen(s+pi);
+		read8(C,&db);	return da==db;
+		case 0x07:	case 0X08:
+		us tb;read2(C,&tb);
+		return matchconst1(tb,s,m);
+		default:	read2(C,&tb);
+		if(!matchconst1(tb,s,m))	return 0;
+		read2(C,&tb);	return matchconst1(tb,s,m);
+	}
+}bool matchconst(int n,char s[65536],int m=0)
+{int lpi=pi;pi=0;bool t=matchconst1(n,s,m);pi=lpi;return t;}
+us fndc1(cc c[65536],int m=0){//[-add][deep]
+	int ti=0;
 	for(int i=1;i<fcnt[_const_pool];i++)
-	if(chkc(i,1)){
-		readconst(copos[i],b);
-		if(cmp(b,c))
-		{ti=i;break;}
-	}if(ti==0){
-		ti=fcnt[_const_pool]++;
-		b[0]=1;
+	if(matchconst(i,(char*)c+pi,1)&&(m&1)||
+	matchconst(i,(char*)c,0)&&!(m&1)){ti=i;break;}
+	if(ti==0&&m==0){
+		uc b[256];	ti=fcnt[_const_pool]++;	b[0]=1;
 		for(int i=0;c[i];i++)
-		{b[i+3]=c[i];b[1]=i&0XFF00;b[2]=i&0X00FF;}
-		finst(inpnam,copos[ti],b,b[1]+3);
-	}	return ti;
+		{b[i+3]=c[i];b[1]=(i+1)>>8;b[2]=(i+1)&0XFF;}
+		finst(inpnam,copos[ti],(cc*)b,b[1]*256+b[2]+3);
+//		printf("!%llX!\n",copos[ti]);
+		pa2(inpnam,copos[0],1);
+		for(int i=65534;i>=fcnt[_const_pool]-1;i--)
+		copos[i+1]=copos[i]!=0?(copos[i]+b[1]*256+b[2]+3):0;
+	}if(ti==0&&m==1){
+//		printf("%s\n",c+pi);
+		char t;sscanf(c+pi,"%X",&t);pi+=3;
+		switch(t){
+			case 1:t=0;
+			sscanf(c+pi,"%X\"",&t);pi+=5;
+			char b[65536];
+			for(int i=0;i<t;i++)
+			b[i]=c[i+pi];b[t]=0;pi+=t+2;
+			return fndc1(b,0);
+			break;
+			case 0X07:	case 0X08:
+			us ti;ti=fndc1(c,m);
+			addc(fcnt[_const_pool],t);
+			pa2(inpnam,copos[fcnt[_const_pool]-1]+1,ti);
+//			printf(":%llX:\n",copos[fcnt[_const_pool]-1]);
+			return fcnt[_const_pool]-1;
+			default:
+			us ti2;ti=fndc1(c,m);ti2=fndc1(c,m);
+			addc(fcnt[_const_pool],t);
+			pa2(inpnam,copos[fcnt[_const_pool]-1]+1,ti);
+			pa2(inpnam,copos[fcnt[_const_pool]-1]+3,ti2);
+//			printf(":%llX:\n",copos[fcnt[_const_pool]-1]);
+			return fcnt[_const_pool]-1;
+			break;
+		}
+	}
+	return ti;
+}us fndc(cc c[65536],int m=0)
+{int lpi=pi;pi=0;us t=fndc1(c,m);pi=lpi;return t;}
+int resolve(uc *c,int p,int m=1){
+	FILE *T=fopen("marco.txt","rb");
+	fsetpos(T,&marcp[p]);int i=0;
+	for(;i<codln[p];i++){
+		char s[65536];int x;
+		fscanf(T,"%X",&x);c[i]=x;
+		getline(s,T);
+		if(x==0XFF){
+			for(int j=0;j<marcp.size();j++)
+			if(cmp(marnm[j],s))
+			{resolve(c+i,j,m);
+			i+=codln[j];break;}
+			continue;
+		}
+		for(int j=0;s[j];j++){
+			if(s[j]=='#'){
+				if(m==1){
+				us temp=fndc(s+j+1,m);
+				c[i+1]=temp>>8;
+				c[i+2]=temp&0XFF;
+				}else	c[i+1]=c[i+2]=0XFF;
+				i+=2;
+			}
+		}
+	}
+	fclose(T);
+	return i;
 }
 void delall(int x=0){
 	for(int i=1;i<fcnt[_const_pool];i++){
@@ -243,7 +342,7 @@ void delall(int x=0){
 us temp;ui temp4;
 #define errcall getchar();goto file_end;
 int main(int argc,char **argv){
-	system(lockname);
+//	system(lockname);
 	delall(1);
 	while(1)	if(issel(hwnd)){
 		file_start:	char c[1024];
@@ -265,7 +364,7 @@ int main(int argc,char **argv){
 			sprintf(c,"EXAMPLE\\prog.exe 1 %s %s",inpnam,n);	system(c);
 			getchar();}
 		if(keydn(VK_CONTROL)&&key('A')){
-			sprintf(c,"EXAMPLE\\%s,exe");if(isfile(c))
+			if(isfile(c))
 			sprintf(c,"EXAMPLE\\%s.exe 0 \"%s\"",typnam,inpnam);else
 			sprintf(c,"EXAMPLE\\prog.exe 0 \"%s\"",inpnam);	system(c);
 			getchar();}
@@ -282,20 +381,32 @@ int main(int argc,char **argv){
 		if(temp4!=0XCAFEBABE){printf("not a file%X",temp4);getchar();}
 		fprintf(O,"ver:");show4(F,O);
 	#define O_EXMP_myIDE
-		{FILE *T=fopen("bytecode_extension.txt","rb");
+		FILE *T=fopen("bytecode_extension.txt","rb");
 		O=(showno==_exmpw)?stdout:W;
 		fprintf(O,"查找\n");
-		for(int i=0;!feof(T);i++){
+		int i=0;
+		for(;!feof(T);i++){
 			codln[i]=1;	fscanf(T,"%d ",&codln[i]);
+			if(feof(T))	break;
 			O=(showno==_exmpw&&i>=m[fis[_methods]].is[_exmpw]&&i<m[fis[_methods]].is[_exmpw]-2+getheight())?stdout:W;
 			fprintf(O,"%+02X",i);	getline(codnm[i],T);fprintf(O,"%s\n",codnm[i]);
-		}fclose(T);
-		}fgetpos(F,&copos[fcnt[_const_pool]+_file_atri]);
+		}freopen("marco.txt","rb",T);
+		while(1){
+			getline(c,T,256);
+			if(c[0]=='+'){
+			fprintf(O,"%+02X%s\n",i,c+10);
+			sscanf(c,"+%X %X",&codln[i],&marln[i]);
+			marcp[i]=fofst(T,0);
+			strcpy(marnm[i],c+18);i++;}
+			if(c[0]=='-')	break;
+		}
+		fclose(T);
 		//infos
 	#define O_CONST_myIDE
 		//const
 		rewind(W);
 		O=(showno==_consw)?stdout:W;
+		fgetpos(F,&(copos[0]));
 		read2(F,&fcnt[_const_pool]);
 		fprintf(O,"const:");out2(O,fis[_const_pool]);
 		fprintf(O,"/");		out2(O,fss[_const_pool]);
@@ -391,26 +502,39 @@ int main(int argc,char **argv){
 					rewind(W);
 					fprintf(O,"\n");
 					O=W;	m[i].cnt[_codep]=0;
+					for(int i=207;i<codln.size();i++)	marhs[i]=0;
 					for(int j=0;j<len;){
 						fgetpos(F,&(m[i].prpos[m[i].cnt[_codep]]));
 						int ct=unsign(show1(F,O));
-						fprintf(O,"%.9s",codnm[ct]);
+						for(int k=207;k<codln.size();k++){
+							uc c[65536]={};resolve(c,k,0);
+//							printf("\n");outstr((char*)c);printf("\n");
+							while(c[marhs[k]]==0XFF)	marhs[k]++;
+							if(ct==c[marhs[k]]){
+							if(marhs[k]==0)	marhp[k]=fofst(O,0);
+							marhs[k]++;if(marhs[k]==codln[k])
+							{fsetpos(O,&marhp[k]);fprintf(O,"FF%s",marnm[k]);
+							m[i].cnt[_codep]-=marln[k]-1;goto on;}
+							}	else	marhs[k]=0;
+						}
+						fprintf(O,"%.9s",codnm[ct]);on:
 						j+=codln[ct];m[i].cnt[_codep]++;
 						for(int i=0;codnm[ct][i];i++){
-							if(codnm[ct][i]=='<'&&codnm[ct][i+4]=='>')
+							if(codnm[ct][i]=='<'&&codnm[ct][i+4]=='>'){
+								fprintf(O,"%c",codnm[ct][i+1]); 
 							switch (codnm[ct][i+1]){
 										case '+':
-									if(codnm[ct][i+2]=='1')	show1(F,O);
-									if(codnm[ct][i+2]=='2')	show2(F,O);
+									if(codnm[ct][i+2]=='1'){	show1(F,O);}
+									if(codnm[ct][i+2]=='2'){	show2(F,O);}
 								break;	case '#':
 									if(codnm[ct][i+2]=='s')
 									outc(F,O,_short_other);
 									if(codnm[ct][i+2]=='l')
 									switch(codnm[ct][i+3]){
-										case 's':	fprintf(O,"#");	outc(F,O,_ls);		break;
-										case 'l':	fprintf(O,"#");	outc(F,O,_ll);		break;
-										case 'n':	fprintf(O,"#");	outc(F,O,_info);	break;
-										case 'c':	fprintf(O,"#");	outc(F,O,_class);	break;
+										case 's':	outc(F,O,_ls);		break;
+										case 'l':	outc(F,O,_ll);		break;
+										case 'n':	outc(F,O,_info);	break;
+										case 'c':	outc(F,O,_class);	break;
 									}
 								break;	case '$':
 									if(codnm[ct][i+2]=='v')
@@ -419,8 +543,10 @@ int main(int argc,char **argv){
 									outv(F,O,_short_other,m[i].vupos);	
 								break;
 							}
+							}
 						}fprintf(O,"\n");
 					}fgetpos(F,&(m[i].prpos[m[i].cnt[_codep]]));
+					
 					freopen("waste.txt","rb+",W);
 					for(int j=0;j<m[i].cnt[_codep];j++){
 						char c=0;
@@ -433,6 +559,7 @@ int main(int argc,char **argv){
 							printf("%c",c);
 						}
 					}
+					
 					freopen("waste.txt","wb",W);
 					O=(showno==_codew&&fis[_methods]==i)?stdout:W;
 					fprintf(O,"程序%+08X/%+08X/%+08X",m[i].is[_codew],m[i].cnt[_codep],m[i].ss[_codew]);
@@ -530,7 +657,7 @@ int main(int argc,char **argv){
 			if(m[i].tpos[_varip]<=0&&showno==_variw)	printf("变量表");	fprintf(O,"\n");
 			if(m[i].tpos[_smttp]>0)	fprintf(O,"栈表");		fprintf(O,"\n");
 			if(m[i].tpos[_signp]>0)	fprintf(O,"签名");		fprintf(O,"\n");
-		}
+		}fgetpos(F,&copos[fcnt[_const_pool]+_file_atri]);
 		//method
 	#define O_FATRI_myIDE
 		//info
@@ -748,8 +875,8 @@ int main(int argc,char **argv){
 				for(int i=fss[_const_pool]+1;i<fcnt[_const_pool]-1;i++)
 					repc(cupos[i],i-1);
 				delc(fss[_const_pool]);
-			}else if(key(VK_OEM_PLUS)){
-				fprintf(O,"01/1文本\n02/2NO\n03/3整数\n04/4小数\n05/5长数\n06/6长小\n07/7类\n08/8字符串\n09/9字段\n");
+			}else if(key(VK_OEM_PLUS)){system("CLS");
+				fprintf(O,"\n01/1文本\n02/2NO\n03/3整数\n04/4小数\n05/5长数\n06/6长小\n07/7类\n08/8字符串\n09/9字段\n");
 				fprintf(O,"0A/A方法\n0B/B接口\n0C/C定义\n0D/DNO\n0E/ENO\n0F/F句柄\n10/G法类\n11/H\n12/IINVD");
 				int k=0;	while(!key(VK_LBUTTON)){
 					if(key(VK_RBUTTON)||key(VK_ESCAPE))	goto file_end;
@@ -773,7 +900,7 @@ int main(int argc,char **argv){
 					if(key('I')){	k=0X12;	break;}
 				}
 				if(k==0X02||k==0X0E||k==0X0F||k==0X11||k>0X12)	goto file_end;
-				if(fss[_const_pool]<=0)	addc(fcnt[_const_pool]-1,k);
+				if(fss[_const_pool]<=0)	addc(fcnt[_const_pool],k);
 				else					addc(fss[_const_pool],k);
 			}
 		}
@@ -814,8 +941,7 @@ int main(int argc,char **argv){
 			temp=tonum(s+i-4);
 			if(temp==0)	printconst(F,O,0,2);
 			else		printconst(F,O,temp);
-			key(VK_RETURN);
-			getchar();	getchar();
+			key(VK_RETURN);while(!key(VK_RETURN)); 
 		}
 		if(key('Z'))	zab=!zab;
 		if(showno>=0&&showno<_enofw){
@@ -889,7 +1015,7 @@ int main(int argc,char **argv){
 						read2(F,&temp);	temp++;	writ2(C,&temp);
 						char c[16]={0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X01};
 						temp=fndc("ConstantValue");
-						c[0]=temp&0XFF00;c[1]=temp&0X00FF;
+						c[0]=temp>>8;c[1]=temp&0X00FF;
 						fclose(F);fclose(C);
 						finst(inpnam,fe[fis[_fields]].tpos[_fielp]+8,c,8);
 						goto file_end;
@@ -955,7 +1081,7 @@ int main(int argc,char **argv){
 				0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,
 				0X00,0X00};
 				int ti=fndc("Code");
-				s[8]=ti&0XFF00;	s[9]=ti&0X00FF;
+				s[8]=ti>>8;	s[9]=ti&0X00FF;
 				FILE *C=fopen(inpnam,"rb+");
 				fsetpos(F,&(copos[fcnt[_const_pool]+_methods]));
 				fsetpos(C,&(copos[fcnt[_const_pool]+_methods]));
@@ -1022,7 +1148,7 @@ int main(int argc,char **argv){
 			&&key(VK_OEM_MINUS)){//del
 				int dt=m[fis[_methods]].prpos[tpos+1]-m[fis[_methods]].prpos[tpos];
 				fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
-				pa2(inpnam,cpos,-dt);
+				pa4(inpnam,cpos,-dt);
 				for(int i=m[fis[_methods]].ss[_codew]+1;i<m[fis[_methods]].cnt[_codep];i++)
 					repc(m[fis[_methods]].pupos[i],i-1);
 				fdelt(inpnam,tnam,m[fis[_methods]].prpos[tpos],m[fis[_methods]].prpos[tpos+1]);
@@ -1061,22 +1187,19 @@ int main(int argc,char **argv){
 			 else if(m[fis[_methods]].is[_exmpw]<codln.size()&&key(VK_DOWN))
 				m[fis[_methods]].is[_exmpw]++;
 			 else if(getmousey()>0&&getmousey()<getheight()-1&&key(VK_LBUTTON)){
+			 	ll d=copos[fcnt[_const_pool]];
 				int i=m[fis[_methods]].is[_exmpw]+getmousey()-1;
-				if(i<203){
-					char s[8]={};s[0]=i;
-					ll t=m[fis[_methods]].prpos[m[fis[_methods]].cnt[_codep]];
-					if(m[fis[_methods]].ss[_codew]!=-1)
-						t=m[fis[_methods]].prpos[m[fis[_methods]].ss[_codew]];
-					for(int i=m[fis[_methods]].ss[_codew];i<m[fis[_methods]].cnt[_codep];i++)
-						repc(m[fis[_methods]].pupos[i],i+1);
-					if(t<=0)	forctop();
-					finst(inpnam,t,s,codln[i]);
-					if(m[fis[_methods]].ss[_codew]!=-1)	m[fis[_methods]].ss[_codew]++;
-					FILE *C=fopen(inpnam,"rb+");
-					int dt=codln[i];
-					fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
-					pa2(inpnam,cpos,dt);
-				}
+				char s[65536]={};if(i<203)	s[0]=i;
+				else resolve((uc*)s,i);
+				ll t=m[fis[_methods]].prpos[m[fis[_methods]].cnt[_codep]];
+				if(m[fis[_methods]].ss[_codew]!=-1)
+					t=m[fis[_methods]].prpos[m[fis[_methods]].ss[_codew]];
+				d=copos[fcnt[_const_pool]]-d;
+				finst(inpnam,t+d,s,codln[i]);
+				if(m[fis[_methods]].ss[_codew]!=-1)	m[fis[_methods]].ss[_codew]++;
+				fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
+				pa4(inpnam,cpos+d,codln[i]);
+//				while(!key(VK_RETURN));
 			}else if(getmousey()==0&&key(VK_LBUTTON))
 				scanf("%X",&(m[fis[_methods]].is[_exmpw]));
 		}
@@ -1155,8 +1278,7 @@ int main(int argc,char **argv){
 				finst(inpnam,tpos,s,4);
 				if(m[fis[_methods]].is[_linsw]<m[fis[_methods]].cnt[_linsp])	m[fis[_methods]].is[_linsw]++;
 			}else if(m[fis[_methods]].cnt[_linsp]>0
-			&&key(VK_OEM_MINUS)
-			){//del
+			&&key(VK_OEM_MINUS)){//del
 				pa2(inpnam,m[fis[_methods]].tpos[_linsp]+4,-1);
 				fdelt(inpnam,tnam,tpos,tpos+4);
 				if(m[fis[_methods]].is[_linsw]>0)	m[fis[_methods]].is[_linsw]--;
@@ -1197,7 +1319,7 @@ int main(int argc,char **argv){
 				fclose(C);
 				char s[16]={
 				0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X00};
-				s[0]=ti&0XFF00;	s[1]=ti&0X00FF;
+				s[0]=ti>>8;	s[1]=ti&0XFF;
 				printf("%llX",l);	getchar();
 				finst(inpnam,l,s,8);	dbf=true;
 			}
@@ -1223,8 +1345,8 @@ int main(int argc,char **argv){
 			}else if(m[fis[_methods]].tpos[_varip]>=0&&
 			key(VK_OEM_PLUS)){//add
 				char s[10]={};
-				s[8]=ss&0XFF00;
-				s[9]=ss&0x00FF;
+				s[8]=ss>>8;
+				s[9]=ss&0xFF;
 				pa2(inpnam,m[fis[_methods]].tpos[_varip]+4,1);
 				for(int i=ss;i<m[fis[_methods]].cnt[_varip];i++)
 					repc(m[fis[_methods]].vupos[i],i+1);
@@ -1287,7 +1409,7 @@ int main(int argc,char **argv){
 				fclose(C);
 				char s[16]={
 				0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X00};
-				s[0]=ti&0XFF00;	s[1]=ti&0X00FF;
+				s[0]=ti>>8;	s[1]=ti&0X00FF;
 				out8(stdout,l);	return 0;
 				finst(inpnam,l,s,8);	dbf=true;
 			}
@@ -1337,7 +1459,7 @@ int main(int argc,char **argv){
 					tpos=copos[fcnt[_const_pool]+_inclp]+6;
 					s[8]=0;s[9]=0;}
 				else{
-				s[8]=fss[_inclp]&0XFF00;
+				s[8]=fss[_inclp]>>8;
 				s[9]=fss[_inclp]&0x00FF;}
 				FILE *C=fopen(inpnam,"rb+");
 				fsetpos(F,&(copos[fcnt[_const_pool]+_inclp]));
@@ -1451,8 +1573,8 @@ int main(int argc,char **argv){
 				fclose(C);
 				char s[16]={
 				0X0F,0X0F,0X00,0X00,0X00,0X02,0X00,0X00};
-				s[0]=ti&0XFF00;
-				s[1]=ti&0X00FF;
+				s[0]=ti>>8;
+				s[1]=ti&0XFF;
 				finst(inpnam,mi+2,s,8);
 				dbf=true;
 			}
