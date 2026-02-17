@@ -342,7 +342,7 @@ void delall(int x=0){
 us temp;ui temp4;
 #define errcall getchar();goto file_end;
 int main(int argc,char **argv){
-//	system(lockname);
+	system(lockname);
 	delall(1);
 	while(1)	if(issel(hwnd)){
 		file_start:	char c[1024];
@@ -513,7 +513,7 @@ int main(int argc,char **argv){
 							if(ct==c[marhs[k]]){
 							if(marhs[k]==0)	marhp[k]=fofst(O,0);
 							marhs[k]++;if(marhs[k]==codln[k])
-							{fsetpos(O,&marhp[k]);fprintf(O,"FF%s",marnm[k]);
+							{fsetpos(O,&marhp[k]);fofst(O,-2);fprintf(O,"FF%s",marnm[k]);
 							m[i].cnt[_codep]-=marln[k]-1;goto on;}
 							}	else	marhs[k]=0;
 						}
@@ -553,12 +553,13 @@ int main(int argc,char **argv){
 						if(showno==_codew&&fis[_methods]==i&&j>=m[i].is[_codew]&&j<m[i].is[_codew]+getheight()-2){
 						if(j==m[i].ss[_codew])	printf("[");
 						if(j==m[i].is[_codew]+getmousey()-1)	printf("-");}
+						printf("%llX:",m[fis[i]].prpos[j]);
 						for(;c!='\n';){
 							fscanf(W,"%c",&c);
 							if(showno==_codew&&fis[_methods]==i&&j>=m[i].is[_codew]&&j<m[i].is[_codew]+getheight()-2)
 							printf("%c",c);
 						}
-					}
+					}printf("%llX:",m[i].prpos[m[i].cnt[_codep]]);
 					
 					freopen("waste.txt","wb",W);
 					O=(showno==_codew&&fis[_methods]==i)?stdout:W;
@@ -1127,7 +1128,8 @@ int main(int argc,char **argv){
 	#define I_CODE_myIDE
 		if(showno==_codew){
 			stdlop(m[fis[_methods]].ss[_codew],m[fis[_methods]].is[_codew],m[fis[_methods]].cnt[_codep],_codew);
-			fpos_t tpos=max(m[fis[_methods]].ss[_codew],m[fis[_methods]].cnt[_codep]-1);
+			fpos_t tpos=m[fis[_methods]].ss[_codew];
+			if(tpos<0)	tpos=m[fis[_methods]].cnt[_codep]-1;
 				  if(m[fis[_methods]].ss[_codew]>=0
 			&&m[fis[_methods]].ss[_codew]>0
 			&&key(VK_UP)){//go_up
@@ -1147,10 +1149,12 @@ int main(int argc,char **argv){
 			}else if(m[fis[_methods]].cnt[_codep]>0
 			&&key(VK_OEM_MINUS)){//del
 				int dt=m[fis[_methods]].prpos[tpos+1]-m[fis[_methods]].prpos[tpos];
+				while(!key(VK_RETURN));
 				fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
 				pa4(inpnam,cpos,-dt);
 				for(int i=m[fis[_methods]].ss[_codew]+1;i<m[fis[_methods]].cnt[_codep];i++)
 					repc(m[fis[_methods]].pupos[i],i-1);
+					if(m[fis[_methods]].ss[_codew]!=-1)	m[fis[_methods]].ss[_codew]++;
 				fdelt(inpnam,tnam,m[fis[_methods]].prpos[tpos],m[fis[_methods]].prpos[tpos+1]);
 			}else if((m[fis[_methods]].ss[_codew]>=0
 			&&m[fis[_methods]].ss[_codew]==getmousey()+m[fis[_methods]].is[_codew]-1
@@ -1199,7 +1203,6 @@ int main(int argc,char **argv){
 				if(m[fis[_methods]].ss[_codew]!=-1)	m[fis[_methods]].ss[_codew]++;
 				fpos_t cpos=m[fis[_methods]].tpos[_codep]+8;
 				pa4(inpnam,cpos+d,codln[i]);
-//				while(!key(VK_RETURN));
 			}else if(getmousey()==0&&key(VK_LBUTTON))
 				scanf("%X",&(m[fis[_methods]].is[_exmpw]));
 		}
