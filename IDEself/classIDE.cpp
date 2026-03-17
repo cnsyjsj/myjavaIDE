@@ -2,6 +2,7 @@
 #include<cstring>
 #include"wsize.cpp"
 #include <stdio.h>
+#define fprintf fprintf_s
 #include"lib.cpp"
 #include"me.cpp"
 #include<cstring>
@@ -9,10 +10,7 @@
 using namespace std;
 char inpnam[256]="new.class",typnam[256]="class";
 #define tnam "waste.txt"
-//#define lockname "copy C:\\Users\\86139\\Desktop\\projects\\myIDE\\test\\out\\production\\test\\test.class input.class"
-#define lockname "copy EXAMPLE\\prog prog.class"
-//#define lockname "copy ..\\mods\\test\\net\\mcreator\\test\\TestMod.class input.class"
-//#define lockname "copy ..\\mods\\test\\net\\mcreator\\test\\item\\SpawnerhandleItem.class input.class"
+#define lockname "copy java.class input.class"
 struct posln{
 	fpos_t a=0;
 	posln* n=0;
@@ -340,16 +338,16 @@ void delall(int x=0){
 }
 //=============================================
 us temp;ui temp4;
-#define errcall getchar();goto file_end;
+#define errcall getchar();goto rend;
 int main(int argc,char **argv){
 	system(lockname);
 	delall(1);
 	while(1)	if(issel(hwnd)){
 		file_start:	char c[1024];
 		FILE *G=fopen("conf.txt","rb");if(G){
-		fscanf(G,"%d%d%d",&cchk,&csug,&showno,c);
+		fscanf(G,"%d%d%d%d",&cchk,&csug,&showno,&tmpw);
 		getline(c,G);	getline(typnam,G);	getline(inpnam,G);
-		}	fclose(G);	system("cls");
+		fclose(G);}		system("cls");
 		if(keydn(VK_CONTROL)&&key('O')){
 			opfi:printf("文件名");	getline(inpnam);}
 		if(keydn(VK_CONTROL)&&key('N')){
@@ -370,25 +368,25 @@ int main(int argc,char **argv){
 			getchar();}
 		FILE *Z;
 		FILE *F=fopen(inpnam,"rb+"), *O;
-		FILE *W=fopen("waste.txt","wb");
+//		FILE *W=0;
 		if(F==0){printf("没有文件");
-		fclose(F);fclose(W);goto file_start;}
+		fclose(F);goto file_start;}
 		delall(0);	rewind(stdin);
 //		showno=_codew;zab=1;fis[_methods]=1; 
 		//infos
-		O=(showno==_flagw)?stdout:W;
-		temp4=show4(F,W);
+		O=(showno==_flagw)?stdout:0;
+		temp4=show4(F,0);
 		if(temp4!=0XCAFEBABE){printf("not a file%X",temp4);getchar();}
 		fprintf(O,"ver:");show4(F,O);
 	#define O_EXMP_myIDE
 		FILE *T=fopen("bytecode_extension.txt","rb");
-		O=(showno==_exmpw)?stdout:W;
+		O=(showno==_exmpw)?stdout:0;
 		fprintf(O,"查找\n");
 		int i=0;
 		for(;!feof(T);i++){
 			codln[i]=1;	fscanf(T,"%d ",&codln[i]);
 			if(feof(T))	break;
-			O=(showno==_exmpw&&i>=m[fis[_methods]].is[_exmpw]&&i<m[fis[_methods]].is[_exmpw]-2+getheight())?stdout:W;
+			O=(showno==_exmpw&&i>=m[fis[_methods]].is[_exmpw]&&i<m[fis[_methods]].is[_exmpw]-2+getheight())?stdout:0;
 			fprintf(O,"%+02X",i);	getline(codnm[i],T);fprintf(O,"%s\n",codnm[i]);
 		}freopen("marco.txt","rb",T);
 		while(1){
@@ -404,8 +402,7 @@ int main(int argc,char **argv){
 		//infos
 	#define O_CONST_myIDE
 		//const
-		rewind(W);
-		O=(showno==_consw)?stdout:W;
+		O=(showno==_consw)?stdout:0;
 		fgetpos(F,&(copos[0]));
 		read2(F,&fcnt[_const_pool]);
 		fprintf(O,"const:");out2(O,fis[_const_pool]);
@@ -414,7 +411,7 @@ int main(int argc,char **argv){
 		for(int i=1;i<fcnt[_const_pool];i++){
 			O=(i-1<fis[_const_pool]+getheight()-2
 			&&i-1>=fis[_const_pool]&&showno==_consw)
-			?stdout:W;
+			?stdout:0;
 			fprintf(O,"\n");
 			if(i==fss[_const_pool])	fprintf(O,"[");
 			if(i-fis[_const_pool]==getmousey())	fprintf(O,"-");
@@ -426,48 +423,45 @@ int main(int argc,char **argv){
 		//const
 	#define O_FLAG_myIDE
 		//flag
-		rewind(W);
 		fgetpos(F,&(copos[fcnt[_const_pool]]));
-		O=(showno==_flagw&&!zab)?stdout:W;
+		O=(showno==_flagw&&!zab)?stdout:0;
 		openflagsR(F,O);
 		fprintf(O,"\n我叫:   #");	outc(F,O,_class);
 		fprintf(O,"\n爹是:   #");	outc(F,O,_class);
 		//flag
 		
 		//debug
-		O=(showno==_confw?stdout:W);
+		O=(showno==_confw?stdout:0);
 		fprintf(O,"常量检查=%d\n",cchk);
 		fprintf(O,"常量建议=%d\n",csug);
 		fprintf(O,"帮助\n");
 		//debug
 	#define O_INTF_myIDE
 		//interface
-		rewind(W);
 		fgetpos(F,&(copos[fcnt[_const_pool]+_interfaces]));
-		O=(showno==_intfw)?stdout:W;
+		O=(showno==_intfw)?stdout:0;
 		fprintf(O,"接口:");
 		us intercnt=show2(F,O);
 		//interface
 		
 		//field
-		rewind(W);
 		fgetpos(F,&(copos[fcnt[_const_pool]+_fields]));
-		O=(showno==_fielw)?stdout:W;
+		O=(showno==_fielw)?stdout:0;
 		fprintf(O,"字段:");			out2(O,fis[_fields]);
 		fprintf(O,"/");	us fieldcnt=show2(F,O);
 		for(int i=0;i<fieldcnt;i++){
 			fgetpos(F,&(fe[i].tpos[_fielp]));
-			O=(showno==_fielw&&fis[_fields]==i)?stdout:W;
+			O=(showno==_fielw&&fis[_fields]==i)?stdout:0;
 			openflagsR(F,O);
 			fprintf(O,"\n名字:");outc(F,O,_field_name);
 			fprintf(O,"\n类型:");outc(F,O,_field_type);
 			fprintf(O,"\n附加:");us temp=show2(F,O);
 			char buf[256];
 			for(int j=0;j<temp;j++){
-				readconst(copos[outc(F,W,_atri_type)],buf);
+				readconst(copos[outc(F,0,_atri_type)],buf);
 				if(cmp(buf,"ConstantValue")){
 					fgetpos(F,&fe[i].tpos[_consp]);
-					show4(F,W);
+					show4(F,0);
 					mktab(O,1);	fprintf(O,"是常量:");outc(F,O,_allc);
 				}
 			}
@@ -476,32 +470,31 @@ int main(int argc,char **argv){
 	#define O_METHOD_myIDE
 		//method
 		fgetpos(F,&(copos[fcnt[_const_pool]+_methods]));
-		O=(showno==_methw)?stdout:W;
+		O=(showno==_methw)?stdout:0;
 		fprintf(O,"方法:");			out2(O,fis[_methods]);
 		fprintf(O,"/");				fcnt[_methods]=show2(F,O);
 		for(int i=0;i<fcnt[_methods];i++){
-			rewind(W);	for(int j=0;j<8;j++)
+			for(int j=0;j<8;j++)
 			{m[i].cnt[j]=-1;m[i].tpos[j]=-1;}
-			O=(showno==_methw&&fis[_methods]==i&&!zab)?stdout:W;
+			O=(showno==_methw&&fis[_methods]==i&&!zab)?stdout:0;
 			fgetpos(F,&(m[i].tpos[_methp]));
 			openflagsR(F,O);
 			fprintf(O,"\n名字:\t#");	outc(F,O,_method_name);
 			fprintf(O,"\n类型:\t#");	outc(F,O,_method_type);
-			us atrc;			atrc=	show2(F,W); 
+			us atrc;			atrc=	show2(F,0); 
 			for(int j=0;j<atrc;j++){
-				int typ=outc(F,W,_atri_type);
+				int typ=outc(F,0,_atri_type);
 				char s[256]={};readconst(copos[typ],s);
 				if(cmp(s,"Code")){
 					fgetpos(F,&(m[i].tpos[_codep]));
-					ui tlen=show4(F,W);
-					O=(showno==_codew&&fis[_methods]==i)?stdout:W;
+					ui tlen=show4(F,0);
+					O=(showno==_codew&&fis[_methods]==i)?stdout:0;
 					fprintf(O,"栈大小=");	show2(F,O);
 					fprintf(O,"\t变量数=");	show2(F,O);
 					fprintf(O,"\t长度=");
 					unsigned len;		len=show4(F,O);
-					rewind(W);
 					fprintf(O,"\n");
-					O=W;	m[i].cnt[_codep]=0;
+					O=fopen("waste.txt","rb+");	m[i].cnt[_codep]=0;
 					for(int i=207;i<codln.size();i++)	marhs[i]=0;
 					for(int j=0;j<len;){
 						fgetpos(F,&(m[i].prpos[m[i].cnt[_codep]]));
@@ -537,8 +530,8 @@ int main(int argc,char **argv){
 										case 'c':	outc(F,O,_class);	break;
 									}
 								break;	case '$':
-									if(codnm[ct][i+2]=='v')
-									outv(F,O,0,m[i].vupos);
+									if(codnm[ct][i+2]=='l')
+									outv(F,O,_short_other,m[i].vupos);
 									if(codnm[ct][i+2]=='v')
 									outv(F,O,_short_other,m[i].vupos);	
 								break;
@@ -547,28 +540,27 @@ int main(int argc,char **argv){
 						}fprintf(O,"\n");
 					}fgetpos(F,&(m[i].prpos[m[i].cnt[_codep]]));
 					
-					freopen("waste.txt","rb+",W);
+					FILE *W=fopen("waste.txt","rb+");
 					for(int j=0;j<m[i].cnt[_codep];j++){
 						char c=0;
 						if(showno==_codew&&fis[_methods]==i&&j>=m[i].is[_codew]&&j<m[i].is[_codew]+getheight()-2){
 						if(j==m[i].ss[_codew])	printf("[");
 						if(j==m[i].is[_codew]+getmousey()-1)	printf("-");}
-						printf("%llX:",m[fis[i]].prpos[j]);
-						for(;c!='\n';){
+						//printf("%llX:",m[fis[i]].prpos[j]);
+						while(c!='\n'){
 							fscanf(W,"%c",&c);
 							if(showno==_codew&&fis[_methods]==i&&j>=m[i].is[_codew]&&j<m[i].is[_codew]+getheight()-2)
 							printf("%c",c);
 						}
-					}printf("%llX:",m[i].prpos[m[i].cnt[_codep]]);
-					
-					freopen("waste.txt","wb",W);
-					O=(showno==_codew&&fis[_methods]==i)?stdout:W;
+					}//printf("%llX:",m[i].prpos[m[i].cnt[_codep]]);
+					fclose(W);
+					O=(showno==_codew&&fis[_methods]==i)?stdout:0;
 					fprintf(O,"程序%+08X/%+08X/%+08X",m[i].is[_codew],m[i].cnt[_codep],m[i].ss[_codew]);
-					O=(showno==_trysw&&fis[_methods]==i)?stdout:W;
+					O=(showno==_trysw&&fis[_methods]==i)?stdout:0;
 					fgetpos(F,&(m[i].tpos[_trysp]));
 					fprintf(O,"错误表%+04X/",m[i].is[_trysw]);	m[i].cnt[_trysp]=show2(F,O);
 					for(int j=0;j<m[i].cnt[_trysp];j++){
-						O=(showno==_trysw&&fis[_methods]==i&&j>=m[i].is[_trysw]&&j<m[i].is[_trysw]+getheight())?stdout:W;
+						O=(showno==_trysw&&fis[_methods]==i&&j>=m[i].is[_trysw]&&j<m[i].is[_trysw]+getheight())?stdout:0;
 						fprintf(O,"\n从  ={\t");	show2(F,O);
 						fprintf(O,"\t到  ={\t");	show2(F,O);
 						fprintf(O,"\t处理={\t");	show2(F,O);
@@ -581,22 +573,22 @@ int main(int argc,char **argv){
 						typ=outc(F,W,_atri_type);
 						readconst(copos[typ],s);
 								if(cmp(s,"LineNumberTable")){
-							O=(showno==_linsw&&fis[_methods]==i)?stdout:W;
+							O=(showno==_linsw&&fis[_methods]==i)?stdout:0;
 							fgetpos(F,&(m[i].tpos[_linsp]));ui tlen=show4(F,W);
 							fprintf(O,"行数表%+04X/%+04X/",m[i].is[_linsw],m[i].ss[_linsw]);	m[i].cnt[_linsp]=show2(F,O);
 							for(int k=0;k<m[i].cnt[_linsp];k++){
-								O=(showno==_linsw&&fis[_methods]==i&&k>=m[i].is[_linsw]&&k<m[i].is[_linsw]+getheight())?stdout:W;
+								O=(showno==_linsw&&fis[_methods]==i&&k>=m[i].is[_linsw]&&k<m[i].is[_linsw]+getheight())?stdout:0;
 								fprintf(O,"\n");
 								if(k==m[i].ss[_linsw])	fprintf(O,"[");
 								if(k==getmousey()+m[i].is[_linsw]-1)	fprintf(O,"-");
 								show2(F,O);	fprintf(O,"行-\t");	show2(F,O);	fprintf(O,"行");
 							}	chkl(F,tlen,_linsp,i);
 						}else	if(cmp(s,"LocalVariableTable")){
-							O=(showno==_variw&&fis[_methods]==i&&!zab)?stdout:W;
+							O=(showno==_variw&&fis[_methods]==i&&!zab)?stdout:0;
 							fgetpos(F,&(m[i].tpos[_varip]));ui tlen=show4(F,W);
 							fprintf(O,"变量表:%+04X/%+04X/",m[i].is[_variw],m[i].ss[_variw]);	m[i].cnt[_varip]=show2(F,O);
 							for(int k=0;k<m[i].cnt[_varip];k++){
-								O=(showno==_variw&&fis[_methods]==i&&k>=m[i].is[_variw]&&k<m[i].is[_variw]+getheight()&&!zab)?stdout:W;
+								O=(showno==_variw&&fis[_methods]==i&&k>=m[i].is[_variw]&&k<m[i].is[_variw]+getheight()&&!zab)?stdout:0;
 								fprintf(O,"\n");
 								if(k==m[i].ss[_variw])	fprintf(O,"[");
 								if(k==getmousey()+m[i].is[_variw]-1)	fprintf(O,"-");
@@ -609,11 +601,11 @@ int main(int argc,char **argv){
 							chkl(F,tlen,_varip,i);
 							fprintf(O,"\n%X",getmousey()+m[i].is[_variw]-1);
 						}else	if(cmp(s,"LocalVariableTypeTable")){
-							O=(showno==_variw&&fis[_methods]==i&&zab)?stdout:W;
+							O=(showno==_variw&&fis[_methods]==i&&zab)?stdout:0;
 							fgetpos(F,&(m[i].tpos[_vartp]));ui tlen=show4(F,W);
 							fprintf(O,"扩展变量表:%+04X/%+04X/",m[i].is[_variw],m[i].ss[_variw]);	m[i].cnt[_vartp]=show2(F,O);
 							for(int k=0;k<m[i].cnt[_vartp];k++){
-								O=(showno==_variw&&fis[_methods]==i&&k>=m[i].is[_variw]&&k<m[i].is[_variw]+getheight()&&zab)?stdout:W;
+								O=(showno==_variw&&fis[_methods]==i&&k>=m[i].is[_variw]&&k<m[i].is[_variw]+getheight()&&zab)?stdout:0;
 								fprintf(O,"\n");
 								if(k==m[i].ss[_variw])	fprintf(O,"[");
 								if(k==getmousey()+m[i].is[_variw]-1)	fprintf(O,"-");
@@ -626,7 +618,7 @@ int main(int argc,char **argv){
 							chkl(F,tlen,_vartp,i);
 							fprintf(O,"\n%X",getmousey()+m[i].is[_variw]-1);
 						}else	if(cmp(s,"StackMapTable")){
-							O=(showno==_methw&&fis[_methods]==i&&!zab)?stdout:W;
+							O=(showno==_methw&&fis[_methods]==i&&!zab)?stdout:0;
 							fgetpos(F,&(m[i].tpos[_smttp]));ui tlen=show4(F,W);
 							showh(F,O,m[i].cnt[_smttp]=show2(F,O));
 							chkl(F,tlen,_smttp,i);
@@ -641,15 +633,15 @@ int main(int argc,char **argv){
 					}
 					chkl(F,tlen,_codep,i);
 				}else if(cmp(s,"Signature")){
-					O=(showno==_methw&&fis[_methods]==i&&!zab)?stdout:W;
+					O=(showno==_methw&&fis[_methods]==i&&!zab)?stdout:0;
 					fgetpos(F,&(m[i].tpos[_signp]));
-					show4(F,W);fprintf(O,"\n签名:");
+					show4(F,0);fprintf(O,"\n签名:");
 					outc(F,O,_string_text);
 				}else{	printf("\n:%d??%X %s\n",i,typ,s);fpos_t tpos;
 				fgetpos(F,&tpos);printf("@%llX:\n",tpos);errcall}
 			}
 			fgetpos(F,&(m[i].tpos[_endmp]));
-			O=(showno==_methw&&fis[_methods]==i&&zab)?stdout:W;		fprintf(O,"\n");
+			O=(showno==_methw&&fis[_methods]==i&&zab)?stdout:0;		fprintf(O,"\n");
 			if(m[i].tpos[_codep]>0)	fprintf(O,"代码");		fprintf(O,"\n");
 			if(m[i].tpos[_trysp]>0)	fprintf(O,"测试表");	fprintf(O,"\n");
 			if(m[i].tpos[_linsp]>0)	fprintf(O,"行数表");	fprintf(O,"\n");
@@ -662,20 +654,20 @@ int main(int argc,char **argv){
 		//method
 	#define O_FATRI_myIDE
 		//info
-		temp=show2(F,W);
+		temp=show2(F,0);
 		for(;temp;temp--){
 			char s[256];	int t;
-			O=(showno==_flagw&&!zab)?stdout:W;
-			readconst(copos[t=outc(F,W,_atri_type)],s);
+			O=(showno==_flagw&&0)?stdout:0;
+			readconst(copos[t=outc(F,0,_atri_type)],s);
 			if(cmp(s,"SourceFile")){
 				fgetpos(F,&copos[fcnt[_const_pool]+_source]);
-				show4(F,W);	fprintf(O,"\n源文件  #");	outc(F,O,_string_text);
+				show4(F,0);	fprintf(O,"\n源文件  #");	outc(F,O,_string_text);
 			}else if(cmp(s,"InnerClass")){
 				fgetpos(F,&copos[fcnt[_const_pool]+_inclp]);
-				show4(F,W);	fprintf(O,"\n内部类");	O=(showno==_inclw?stdout:W);
+				show4(F,0);	fprintf(O,"\n内部类");	O=(showno==_inclw?stdout:0);
 				fprintf(O,"INC:%+04X",fis[_inclp]);	fcnt[_inclp]=show2(F,O);
 				for(int k=0;k<fcnt[_inclp];k++){
-					O=(showno==_inclw&&k==fis[_inclp])?stdout:W;
+					O=(showno==_inclw&&k==fis[_inclp])?stdout:0;
 					fprintf(O,"\n内类=#");	outc(F,O,_class);
 					fprintf(O,"\n外类=#");	outc(F,O,_class);
 					fprintf(O,"\n类名=#");	outc(F,O,_string_text);
@@ -683,19 +675,19 @@ int main(int argc,char **argv){
 				}
 			}else if(cmp(s,"RuntimeVisibleAnnotations")){
 				fgetpos(F,&copos[fcnt[_const_pool]+_rvanp]);
-				show4(F,W);	fprintf(O,"\n元素");	O=(showno==_rvanw&&!zab?stdout:W);
+				show4(F,0);	fprintf(O,"\n元素");	O=(showno==_rvanw&&!zab?stdout:0);
 				fprintf(O,"RVA:%+04X/%+04X/",fis[_rvanp],fss[_rvanp]);	fcnt[_rvanp]=show2(F,O);
 				for(int i=0;i<fcnt[_rvanp];i++){
-					O=(showno==_rvanw&&!zab&&i>=fis[_rvanp]&&i<fis[_rvanp]+getheight()&&!zab)?stdout:W;
+					O=(showno==_rvanw&&!zab&&i>=fis[_rvanp]&&i<fis[_rvanp]+getheight()&&!zab)?stdout:0;
 					fprintf(O,"\n");
 					if(i==getmousey()+fis[_rvanp]-1)	fprintf(O,"-");
 					if(i==fss[_rvanp])					fprintf(O,"[");
 					fprintf(O,"注解=#");	outc(F,O,_field_type);
-					O=(showno==_rvanw&&zab&&i==max(fis[_rvanp],fss[_rvanp]))?stdout:W;
+					O=(showno==_rvanw&&zab&&i==max(fis[_rvanp],fss[_rvanp]))?stdout:0;
 					fprintf(O,"ANO:%+04X/",anos[i].is);	anos[i].c=show2(F,O);
 					for(int k=0;k<anos[i].c;k++){
 						fgetpos(F,&anos[i].pos[k]);
-						O=(showno==_rvanw&&zab&&k>=anos[i].is&&k<anos[i].is+getheight()&&i==max(fis[_rvanp],fss[_rvanp]))?stdout:W;
+						O=(showno==_rvanw&&zab&&k>=anos[i].is&&k<anos[i].is+getheight()&&i==max(fis[_rvanp],fss[_rvanp]))?stdout:0;
 						fprintf(O,"\n");
 						if(k==getmousey()+anos[i].is-1)	fprintf(O,"-");
 						fprintf(O,"名字=#");	outc(F,O,_string_text);
@@ -713,22 +705,22 @@ int main(int argc,char **argv){
 				}fgetpos(F,&anos[fcnt[_rvanp]].pos[0]);anos[fcnt[_rvanp]].pos[0]+=4;
 			}else if(cmp(s,"BootstrapMethods")){
 				fgetpos(F,&copos[fcnt[_const_pool]+_bootp]);
-				show4(F,W);	fprintf(O,"\n启动项");	O=(showno==_bootw&&!zab?stdout:W);
-				fprintf(O,"BSM:%+04X/",fis[_bootp]);	fcnt[_bootp]=show2(F,O);
+				show4(F,0);	fprintf(O,"\n启动项");	O=(showno==_bootw&&!zab?stdout:0);
+				fprintf(O,"启动项:%+04X/",fis[_bootp]);	fcnt[_bootp]=show2(F,O);
 				for(int i=0;i<fcnt[_bootp];i++){
-					O=(showno==_bootw&&!zab&&i>=fis[_bootp]&&i<fis[_bootp]+getheight()&&!zab)?stdout:W;
+					O=(showno==_bootw&&!zab&&i>=fis[_bootp]&&i<fis[_bootp]+getheight()&&!zab)?stdout:0;
 					fprintf(O,"\n");
 					if(i==getmousey()+fis[_bootp]-1)	fprintf(O,"-");
 					if(i==fss[_bootp])	fprintf(O,"[");
 					fprintf(O,"类型=#");	outc(F,O,_meth_hand);
-					O=(showno==_bootw&&zab&&i==max(fis[_bootp],fss[_bootp]))?stdout:W;
-					fprintf(O,"ARG:%+04X/",fis[_bootp]);	bsms[i].c=show2(F,O);
+					O=(showno==_bootw&&zab&&i==max(fis[_bootp],fss[_bootp]))?stdout:0;
+					fprintf(O,"参数:%+04X/",fis[_bootp]);	bsms[i].c=show2(F,O);
 					for(int k=0;k<bsms[i].c;k++){
 						fgetpos(F,&bsms[i].pos[k]);
-						O=(showno==_bootw&&zab&&k>=bsms[i].is&&k<bsms[i].is+getheight()&&i==max(fis[_bootp],fss[_bootp]))?stdout:W;
+						O=(showno==_bootw&&zab&&k>=bsms[i].is&&k<bsms[i].is+getheight()&&i==max(fis[_bootp],fss[_bootp]))?stdout:0;
 						fprintf(O,"\n");
 						if(k==getmousey()+bsms[i].is-1)	fprintf(O,"-");
-						fprintf(O,"\t值:");outc(F,O,_string_text);
+						fprintf(O,"值=#");outc(F,O,_string_text);
 					}
 				}
 			}else{
@@ -736,14 +728,14 @@ int main(int argc,char **argv){
 				errcall
 			}
 		}
-		O=(showno==_flagw&&zab)?stdout:W;		fprintf(O,"\n");
+		O=(showno==_flagw&&zab)?stdout:0;		fprintf(O,"\n");
 		if(copos[fcnt[_const_pool]+_source]>0)	fprintf(O,"源文件");	fprintf(O,"\n");
 		if(copos[fcnt[_const_pool]+_inclp]>0)	fprintf(O,"内部类");	fprintf(O,"\n");
 		if(copos[fcnt[_const_pool]+_rvanp]>0)	fprintf(O,"注解");		fprintf(O,"\n");
 		if(copos[fcnt[_const_pool]+_bootp]>0)	fprintf(O,"启动项");	fprintf(O,"\n");
 		fgetpos(F,&(copos[fcnt[_const_pool]+_filend]));
 		
-		if(fscanf(F,"%c",&c)<=0)
+		if(fscanf(F,"%c",&c)>0)
 		fprintf(O,"\n未完待续");
 		while(!feof(F)){
 			fscanf(F,"%c",c);	out1(O,*c);
@@ -753,8 +745,13 @@ int main(int argc,char **argv){
 		//info
 /*=============
 =============*/
-//		rend:key(VK_RETURN);
-/*=============		
+		rend:key(VK_RETURN);
+		if(keydn(VK_CONTROL))
+		goto file_end;
+		for(int i=1;i<255;i++)
+		if(keydn(i)) goto run;
+		goto rend;run:
+/*=============
 =============*/
 		O=stdout;
 	#define I_CONST_myIDE
@@ -922,19 +919,22 @@ int main(int argc,char **argv){
 				if(csug){inpc(F,O,C,_class_name);}
 				else	{incn2("爹:   #",0X07,"爹 -> 类\n");}
 			}else{	fofst(F,2);fofst(C,2);
-		}	fsetpos(F,&copos[fcnt[_const_pool]+5]);	fofst(F,-2);
-			fsetpos(C,&copos[fcnt[_const_pool]+5]);	fofst(C,-2);
-			if(k==19){
-				if(csug){inpc(F,O,C,_string_text);}
-				else	{incn2("源:   #",0X01,"源 -> 文件\n");}
-			}fclose(C);	goto file_end;
+		}fclose(C);	goto file_end;
 		}
 		if(showno==_flagw&&zab&&key(VK_LBUTTON)){
 			zab=0;tmpw=_flagw;
+			FILE *C=fopen(inpnam,"rb+");
 			switch (getmousey()){
+			case 1:
+			fsetpos(F,&copos[fcnt[_const_pool]+_source]);	fofst(F,4);
+			fsetpos(C,&copos[fcnt[_const_pool]+_source]);	fofst(C,4);
+			if(csug){inpc(F,O,C,_string_text);}
+			else	{incn2("源:   #",0X01,"源 -> 文件\n");}
+			break;
 			case 2:	showno=_inclw;	break;
 			case 3:	showno=_rvanw;	break; 
 			case 4:	showno=_bootw;	break;	}
+			fclose(C);
 		}
 		if(key('C')){
 			char s[1024];	scanf("%s",s);
@@ -1582,12 +1582,20 @@ int main(int argc,char **argv){
 				dbf=true;
 			}
 		}
-#define FEND_myIDE
+		//RVA/BSM
+		if(showno==_bootw&&!zab){
+			stdlop(fss[_bootp],fis[_bootp],fcnt[_bootp],_bootw);
+		}
+		if(showno==_bootw&&zab){
+			int tpos=max(fis[_bootp],fss[_bootp]);
+			stdlop(bsms[tpos].ss,bsms[tpos].is,bsms[tpos].c,_bootw);
+		}
+	#define FEND_myIDE
 		file_end:
 		key(VK_RETURN);
-		fclose(F);	fclose(W);
+		fclose(F);
 		G=fopen("conf.txt","wb");
-		fprintf(G,"%d %d %d\n",cchk,csug,showno);
+		fprintf(G,"%d %d %d %d\n",cchk,csug,showno,tmpw);
 		fprintf(G,"%s\n",typnam);fprintf(G,"%s\n",inpnam);
 		fclose(G);	Z=fopen(inpnam,"r");if(Z->_file>3){system("cls");printf("file%d",Z->_file);inpnam[0]=0;}fclose(Z);
 	}
